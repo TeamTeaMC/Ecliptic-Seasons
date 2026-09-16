@@ -292,7 +292,7 @@ public class IceWandItem extends Item {
             } else {
 
                 var data = level.getChunkAt(clickedPos).getData(AttachmentRegistry.SNOWY_REMOVER);
-                var notSnowyAtBefore = data.getSnowyFlag(new BlockPos(clickedPos));
+                var notSnowyAtBefore = data.getSnowyFlag(clickedPos);
                 if (type != notSnowyAtBefore) {
                     var particleType = type.getNextParticleOptions();
                     for (int i = 0; i < 10; i++) {

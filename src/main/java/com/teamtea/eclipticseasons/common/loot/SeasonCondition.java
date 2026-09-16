@@ -57,7 +57,7 @@ public record SeasonCondition(Slice require) implements LootItemCondition {
         Season startSeason = require.season.isValid() ? require.season : require.startSeason;
         Season endSeason = require.season.isValid() ? require.season : require.endSeason;
         if (startSeason.isValid() && endSeason.isValid()) {
-            var vec3 = context.getOptionalParameter(LootContextParams.ORIGIN);
+            var vec3 = context.getOptional(LootContextParams.ORIGIN);
             BlockPos pos = vec3 == null ? null : BlockPos.containing(vec3);
             if (pos != null) {
                 Season agroSeason = EclipticSeasonsApi.getInstance().getSeasonSignal(level, pos);

@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:growth_detector"
+        "recipes": "eclipticseasons:growth_detector"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

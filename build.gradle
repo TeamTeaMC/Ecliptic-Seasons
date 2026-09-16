@@ -3,7 +3,7 @@ plugins {
     id 'java-library'
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.moddev' version '2.0.141'
+    id 'net.neoforged.moddev' version '2.0.147'
 }
 
 
@@ -281,23 +281,23 @@ dependencies {
 //    implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    compileOnly "maven.modrinth:jei:vIMoMhAT"
-    implementation "maven.modrinth:jade:26.2.2+neoforge"
+    implementation "maven.modrinth:jei:YTC3a33y"
+    implementation "maven.modrinth:jade:26.3.1+neoforge"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
 
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-api-v1:13.0.8+2ef06a054c"
     compileOnly "org.sinytra.forgified-fabric-api:fabric-renderer-indigo:8.1.5+360400df4c"
 
-    sodiumOuter "maven.modrinth:sodium:mc26.2-0.9.1-neoforge"
+    sodiumOuter "maven.modrinth:sodium:mc26.3-0.9.2-neoforge"
     compileOnly fileTree(dir: sodiumJarJarDir, include: ['*.jar'])
 
-    implementation "maven.modrinth:sodium:mc26.2-0.9.1-neoforge"
+    implementation "maven.modrinth:sodium:mc26.3-0.9.2-neoforge"
     compileOnly "maven.modrinth:iris:1.11.2+26.2-neoforge"
 
     compileOnly "maven.modrinth:voxy:0.2.18-beta"
 
-    compileOnly "maven.modrinth:distanthorizons:3.1.0-b-26.2"
+    compileOnly "maven.modrinth:distanthorizons:3.3.0-26.3"
 //    onlyMainRuntimeOnly "maven.modrinth:distanthorizons:3.1.0-b-26.2"
 
     compileOnly "curse.maven:guideme-1173950:8204880"
@@ -307,7 +307,7 @@ dependencies {
     }
 
     println "---- [DEBUG] onlyMain----"
-    onlyMainRuntimeOnly "maven.modrinth:journeymap:26.2-6.0.0-beta.90+neoforge"
+    onlyMainRuntimeOnly "maven.modrinth:journeymap:26.3-6.0.9+neoforge"
 //    onlyMainRuntimeOnly("curse.maven:spark-361579:7815877")
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->

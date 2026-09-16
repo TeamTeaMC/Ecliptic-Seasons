@@ -10,7 +10,7 @@ import com.teamtea.eclipticseasons.api.misc.util.HolderMappable;
 import com.teamtea.eclipticseasons.api.misc.util.Mergable;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.RegistryCodecs;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 import org.jspecify.annotations.NonNull;
@@ -32,7 +32,7 @@ public record BiomeColor(
     }
 
     public static final Codec<BiomeColor> CODEC = RecordCodecBuilder.create(ins -> ins.group(
-            RegistryCodecs.homogeneousList(Registries.BIOME).fieldOf("biomes").forGetter(BiomeColor::biomes),
+            RegistryCodecs.holderSet(Registries.BIOME).fieldOf("biomes").forGetter(BiomeColor::biomes),
             SolarTermValueMap.codec(ColorMode.CODEC).optionalFieldOf("grass_colors").forGetter(BiomeColor::grassColor),
             SolarTermValueMap.codec(ColorMode.CODEC).optionalFieldOf("foliage_colors").forGetter(BiomeColor::foliageColor),
             SolarTermValueMap.codec(ColorMode.CODEC).optionalFieldOf("sky_colors").forGetter(BiomeColor::skyColor),

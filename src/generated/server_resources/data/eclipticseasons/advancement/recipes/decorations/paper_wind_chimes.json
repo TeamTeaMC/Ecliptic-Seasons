@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:paper_wind_chimes"
+        "recipes": "eclipticseasons:paper_wind_chimes"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -5,10 +5,11 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryCodecs;
-import net.minecraft.resources.RegistryFixedCodec;
+import net.minecraft.core.registries.codec.RegistryCodecs;
+import net.minecraft.core.registries.codec.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.ApiStatus;
@@ -107,13 +108,13 @@ public class CodecUtil {
         );
     }
 
-    public static <E> RegistryFixedCodec<E> holderCodec(ResourceKey<? extends Registry<E>> registryKey) {
+    public static <E> Codec<Holder<E>> holderCodec(ResourceKey<? extends Registry<E>> registryKey) {
         return RegistryFixedCodec.create(registryKey);
     }
 
 
     public static <E> Codec<HolderSet<E>> holderSetCodec(ResourceKey<? extends Registry<E>> registryKey) {
-        return RegistryCodecs.homogeneousList(registryKey, false);
+        return RegistryCodecs.holderSet(registryKey, false);
     }
 
     //public static <E> Codec<E> empty(E e) {

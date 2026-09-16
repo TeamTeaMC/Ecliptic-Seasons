@@ -45,6 +45,7 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.Heightmap;
 
+import net.minecraft.world.level.levelgen.densityfunction.SamplerContext;
 import org.jspecify.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
@@ -97,7 +98,6 @@ public class MapChecker {
         // updateLock = false;
         validDimension.removeIf(level1 -> level1 == level);
 
-        LEVEL_PARAMETER_LIST_MAP.remove(level);
     }
 
     public static boolean unloadChunk(Level level, ChunkPos chunkPos) {
@@ -254,14 +254,14 @@ public class MapChecker {
         int cx = SectionPos.blockToSectionCoord(pos.getX());
         int cz = SectionPos.blockToSectionCoord(pos.getZ());
         ChunkAccess chunk = level.getChunkSource().getChunkNow(cx, cz);
-        return chunk != null && chunk.getPersistedStatus().isOrAfter(ChunkStatus.SURFACE) ?
+        return chunk != null && chunk.getPersistedStatus().isOrAfter(ChunkStatus.TERRAIN) ?
                 chunk : null;
     }
 
     public static @Nullable ChunkAccess getChunkView(Level level, int cx, int cz) {
         if (level == null) return null;
         ChunkAccess chunk = level.getChunkSource().getChunkNow(cx, cz);
-        return chunk != null && chunk.getPersistedStatus().isOrAfter(ChunkStatus.SURFACE) ?
+        return chunk != null && chunk.getPersistedStatus().isOrAfter(ChunkStatus.TERRAIN) ?
                 chunk : null;
     }
 
@@ -802,13 +802,13 @@ public class MapChecker {
         }
 
         if (biome == null)
-            biome = level.registryAccess().holderOrThrow(Biomes.PLAINS);
+            biome = level.registryAccess().getOrThrow(Biomes.PLAINS);
 
         if (isSmallBiome(biome)
                 && level instanceof ServerLevel serverLevel) {
-            Climate.TargetPoint sample = RiverBiomeResolver.getClimateTargetPoint(serverLevel.getChunkSource().randomState(), pos.mutable());
+            Climate.TargetPoint sample = RiverBiomeResolver.getClimateTargetPoint(serverLevel.getChunkSource().randomState().createClimateSampler(SamplerContext.EMPTY_UNCACHED), pos.mutable());
             ResourceKey<Biome> biomeResourceKey = RiverBiomeResolver.getClimateBiome(sample);
-            biome = level.registryAccess().holder(biomeResourceKey).map(bh -> (Holder) bh).orElse(biome);
+            biome = level.registryAccess().get(biomeResourceKey).map(bh -> (Holder) bh).orElse(biome);
         }
 
         BlockPos.MutableBlockPos relative = null;
@@ -856,7 +856,7 @@ public class MapChecker {
                     int qx = QuartPos.fromBlock(relative.getX());
                     int qy = QuartPos.fromBlock(relative.getY());
                     int qz = QuartPos.fromBlock(relative.getZ());
-                    biome = biomeSource.getNoiseBiome(qx, qy, qz, serverLevel.getChunkSource().randomState().sampler());
+                    biome = biomeSource.createResolver(serverLevel.getChunkSource().randomState().createClimateSampler(SamplerContext.EMPTY_UNCACHED)).getNoiseBiome(qx, qy, qz);
                 } else if (bid < 0) {
                     y = getHeightSafe(level, relative) + 1;
                     if (y > maxBuildHeight || y <= minBuildHeight) {
@@ -888,37 +888,6 @@ public class MapChecker {
     }
 
 
-    public static final Map<Level, Climate.ParameterList<Holder<Biome>>> LEVEL_PARAMETER_LIST_MAP = new IdentityHashMap<>();
-
-    private static Holder<Biome> fixBiomeOnServer(ServerLevel level, BlockPos
-            pos, Holder<Biome> biome, ChunkInfoMap map) {
-        Climate.ParameterList<Holder<Biome>> parameters = LEVEL_PARAMETER_LIST_MAP.get(level);
-        if (parameters == null) {
-            BiomeSource biomeSource = level.getChunkSource().getGenerator().getBiomeSource();
-            if (biomeSource instanceof MultiNoiseBiomeSource multiNoiseBiomeSource) {
-                Climate.ParameterList<Holder<Biome>> parameters2 = multiNoiseBiomeSource.parameters();
-                List<Pair<Climate.ParameterPoint, Holder<Biome>>> list = parameters2.values().stream().filter(p -> !isSmallBiome(p.getSecond())).toList();
-                parameters = new Climate.ParameterList<>(list);
-                LEVEL_PARAMETER_LIST_MAP.put(level, parameters);
-            }
-        }
-        if (parameters != null) {
-            // int biomeId = map == null ? -1 :
-            //         map.getBiome(QuartPos.toBlock(QuartPos.fromBlock(pos.getX())), QuartPos.toBlock(QuartPos.fromBlock(pos.getZ())));
-            // if (biomeId > -1) {
-            //     biome = idToBiome(level, biomeId);
-            // }
-            {
-                Climate.Sampler sampler = level.getChunkSource().randomState().sampler();
-                Climate.TargetPoint sample = sampler.sample(QuartPos.fromBlock(pos.getX()), QuartPos.fromBlock(pos.getY()), QuartPos.fromBlock(pos.getZ()));
-                biome = parameters.findValue(sample);
-
-            }
-        }
-        return biome;
-    }
-
-
     public static int getBlockType(BlockState state, BlockGetter level, BlockPos pos) {
         int flag = FLAG_NONE;
         // 不知道为啥这里会有null
@@ -943,7 +912,7 @@ public class MapChecker {
             flag = FLAG_GRASS_LARGE;
         } else if (onBlock instanceof VineBlock) {
             flag = FLAG_VINE;
-        } else if ((onBlock instanceof FarmlandBlock || onBlock instanceof DirtPathBlock)) {
+        } else if ((onBlock instanceof FarmlandBlock || onBlock instanceof PathBlock)) {
             flag = FLAG_FARMLAND;
         } else if (onBlock instanceof TrapDoorBlock ||
                 (onBlock instanceof DoorBlock && state.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) ||

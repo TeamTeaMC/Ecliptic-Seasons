@@ -28,10 +28,6 @@ public class DehumidifierBlock extends SimpleEntityBlock implements SimpleHumidi
         super(properties);
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(DehumidifierBlock::new);
-    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {

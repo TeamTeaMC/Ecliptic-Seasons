@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:autumn_greenhouse_core"
+        "recipes": "eclipticseasons:autumn_greenhouse_core"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

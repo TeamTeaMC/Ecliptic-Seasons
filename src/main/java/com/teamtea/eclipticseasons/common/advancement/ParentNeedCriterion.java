@@ -4,13 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.advancements.predicates.ContextAwarePredicate;
 import net.minecraft.advancements.triggers.Criterion;
 import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerAdvancementManager;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.jspecify.annotations.NonNull;
 
 import java.lang.ref.WeakReference;
@@ -47,13 +48,13 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
         }
 
         public static Criterion<TriggerInstance> simple(AdvancementHolder advancementHolder) {
-            return ModAdvancements.parentNeedCriterion.get().createCriterion(
+            return ModAdvancements.PARENT_NEED.get().createCriterion(
                     new TriggerInstance(Optional.of(advancementHolder.id()))
             );
         }
 
         public static Criterion<TriggerInstance> simple(Identifier Identifier) {
-            return ModAdvancements.parentNeedCriterion.get().createCriterion(
+            return ModAdvancements.PARENT_NEED.get().createCriterion(
                     new TriggerInstance(Optional.of(Identifier))
             );
         }
@@ -70,7 +71,7 @@ public class ParentNeedCriterion extends SimpleCriterionTrigger<ParentNeedCriter
         }
 
         @Override
-        public @NonNull Optional<ContextAwarePredicate> player() {
+        public @NonNull Optional<Holder<LootItemCondition>> player() {
             return Optional.empty();
         }
 

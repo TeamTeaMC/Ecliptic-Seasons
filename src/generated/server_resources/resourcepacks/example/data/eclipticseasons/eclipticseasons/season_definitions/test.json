@@ -9,9 +9,7 @@
           },
           "place": [
             {
-              "block": {
-                "Name": "minecraft:short_grass"
-              },
+              "block": "minecraft:short_grass",
               "weight": 22,
               "conditions": {
                 "above": true,
@@ -24,13 +22,7 @@
               ]
             },
             {
-              "block": {
-                "Properties": {
-                  "flower_amount": "1",
-                  "facing": "north"
-                },
-                "Name": "minecraft:wildflowers"
-              },
+              "block": "minecraft:wildflowers",
               "conditions": {
                 "above": true,
                 "type": "empty_above"
@@ -54,11 +46,11 @@
           },
           "place": {
             "block": {
-              "Properties": {
+              "properties": {
                 "flower_amount": "2",
                 "facing": "north"
               },
-              "Name": "minecraft:wildflowers"
+              "id": "minecraft:wildflowers"
             },
             "replace": true,
             "weight": 5,
@@ -79,11 +71,11 @@
           },
           "place": {
             "block": {
-              "Properties": {
+              "properties": {
                 "flower_amount": "3",
                 "facing": "north"
               },
-              "Name": "minecraft:wildflowers"
+              "id": "minecraft:wildflowers"
             },
             "replace": true,
             "weight": 5,
@@ -104,11 +96,11 @@
           },
           "place": {
             "block": {
-              "Properties": {
+              "properties": {
                 "flower_amount": "4",
                 "facing": "north"
               },
-              "Name": "minecraft:wildflowers"
+              "id": "minecraft:wildflowers"
             },
             "replace": true,
             "weight": 5,
@@ -128,19 +120,14 @@
         "place": {
           "parts": [
             {
-              "block": {
-                "Properties": {
-                  "half": "lower"
-                },
-                "Name": "minecraft:tall_grass"
-              }
+              "block": "minecraft:tall_grass"
             },
             {
               "block": {
-                "Properties": {
+                "properties": {
                   "half": "upper"
                 },
-                "Name": "minecraft:tall_grass"
+                "id": "minecraft:tall_grass"
               },
               "offset": [
                 0,
@@ -167,9 +154,7 @@
             }
           },
           "place": {
-            "block": {
-              "Name": "minecraft:short_grass"
-            }
+            "block": "minecraft:short_grass"
           }
         },
         {
@@ -188,9 +173,7 @@
             "blocks": "minecraft:short_grass"
           },
           "place": {
-            "block": {
-              "Name": "minecraft:air"
-            },
+            "block": "minecraft:air",
             "replace": true
           }
         },
@@ -199,9 +182,7 @@
             "blocks": "minecraft:wildflowers"
           },
           "place": {
-            "block": {
-              "Name": "minecraft:air"
-            },
+            "block": "minecraft:air",
             "replace": true
           }
         },
@@ -213,9 +194,7 @@
             }
           },
           "place": {
-            "block": {
-              "Name": "minecraft:short_grass"
-            }
+            "block": "minecraft:short_grass"
           }
         },
         {

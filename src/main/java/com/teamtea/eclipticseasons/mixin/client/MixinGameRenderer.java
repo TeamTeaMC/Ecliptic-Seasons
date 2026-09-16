@@ -23,7 +23,7 @@ public abstract class MixinGameRenderer {
 
 
     @Inject(at = {@At("HEAD")}, method = {"render"})
-    private void eclipticseasons$init(DeltaTracker pDeltaTracker, boolean pRenderLevel, CallbackInfo ci) {
+    private void eclipticseasons$init(CallbackInfo ci) {
         // ClientRenderer.applyEffect((GameRenderer)(Object)this,EFFECTS,this.minecraft.player);
     }
 }

@@ -13,8 +13,8 @@ public class ModAdvancements {
     // advancement
     public static final DeferredRegister<CriterionTrigger<?>> TRIGGER_DEFERRED_REGISTER = DeferredRegister.create(Registries.TRIGGER_TYPE, EclipticSeasonsApi.MODID);
     public static final Supplier<SolarTermsCriterion> heatStrokeCriterion = TRIGGER_DEFERRED_REGISTER.register("heat_stroke", SolarTermsCriterion::new);
-    public static final Supplier<SolarTermsCriterion> solarTermsCriterion = TRIGGER_DEFERRED_REGISTER.register("solar_terms", SolarTermsCriterion::new);
+    public static final Supplier<SolarTermsCriterion> SOLAR_TERMS = TRIGGER_DEFERRED_REGISTER.register("solar_terms", SolarTermsCriterion::new);
     public static final Supplier<SolarTermsCriterion> greenhouseCriterion = TRIGGER_DEFERRED_REGISTER.register("greenhouse", SolarTermsCriterion::new);
-    public static final Supplier<ParentNeedCriterion> parentNeedCriterion = TRIGGER_DEFERRED_REGISTER.register("parent", ParentNeedCriterion::new);
+    public static final Supplier<ParentNeedCriterion> PARENT_NEED = TRIGGER_DEFERRED_REGISTER.register("parent", ParentNeedCriterion::new);
 
 }

@@ -3,11 +3,11 @@ package com.teamtea.eclipticseasons.common.advancement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
-import net.minecraft.advancements.predicates.ContextAwarePredicate;
-import net.minecraft.advancements.predicates.entity.EntityPredicate;
 import net.minecraft.advancements.triggers.Criterion;
 import net.minecraft.advancements.triggers.SimpleCriterionTrigger;
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
@@ -25,27 +25,27 @@ public class SolarTermsCriterion extends SimpleCriterionTrigger<SolarTermsCriter
 
 
     public record TriggerInstance(
-            Optional<ContextAwarePredicate> player) implements SimpleInstance {
+            Optional<Holder<LootItemCondition>> player) implements SimpleInstance {
         public static final Codec<TriggerInstance> CODEC = RecordCodecBuilder.create(
                 builder -> builder.group(
-                                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player))
+                                LootItemCondition.CODEC.optionalFieldOf("player").forGetter(TriggerInstance::player))
                         .apply(builder, TriggerInstance::new)
         );
 
         public static Criterion<TriggerInstance> simple() {
-            return ModAdvancements.solarTermsCriterion.get().createCriterion(
+            return ModAdvancements.SOLAR_TERMS.get().createCriterion(
                     new TriggerInstance(Optional.empty())
             );
         }
 
         public static Criterion<TriggerInstance> simple2() {
-            return ModAdvancements.heatStrokeCriterion.get().createCriterion(
+            return ModAdvancements.SOLAR_TERMS.get().createCriterion(
                     new TriggerInstance(Optional.empty())
             );
         }
 
         public static Criterion<TriggerInstance> simple3() {
-            return ModAdvancements.greenhouseCriterion.get().createCriterion(
+            return ModAdvancements.SOLAR_TERMS.get().createCriterion(
                     new TriggerInstance(Optional.empty())
             );
         }

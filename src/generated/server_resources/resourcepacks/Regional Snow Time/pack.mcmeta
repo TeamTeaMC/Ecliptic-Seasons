@@ -3,10 +3,7 @@
     "description": {
       "translate": "pack.eclipticseasons.regional_snow_time.description"
     },
-    "max_format": 107,
-    "min_format": [
-      107,
-      1
-    ]
+    "max_format": 121,
+    "min_format": 121
   }
 }

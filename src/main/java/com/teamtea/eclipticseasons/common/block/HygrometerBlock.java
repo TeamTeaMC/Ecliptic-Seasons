@@ -50,11 +50,6 @@ public class HygrometerBlock extends WallPlacedBlock {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(CalendarBlock::new);
-    }
-
-    @Override
     protected VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
         return SHAPES[pState.getValue(FACING).get2DDataValue()];
     }

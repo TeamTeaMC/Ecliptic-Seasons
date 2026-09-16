@@ -20,9 +20,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class RegionalSnowTimeProvider extends DatapackBuiltinEntriesProvider {
+public class RegionalSnowTimeProvider {
 
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
+            .add(Registries.BIOME,c->{})
             .add(ESRegistries.SNOW_TERM, (context -> {
                 HolderGetter<Biome> lookup = context.lookup(Registries.BIOME);
                 context.register(ResourceKey.create(ESRegistries.SNOW_TERM, ClimateTypeBiomeTags.COLD_REGION.location()),
@@ -110,12 +111,12 @@ public class RegionalSnowTimeProvider extends DatapackBuiltinEntriesProvider {
                                 .build());
             }));
 
-    public RegionalSnowTimeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
-    }
-
-    @Override
-    public @NonNull String getName() {
-        return super.getName() + " Extra2";
-    }
+    // public RegionalSnowTimeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    //     super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
+    // }
+    //
+    // @Override
+    // public @NonNull String getName() {
+    //     return super.getName() + " Extra2";
+    // }
 }

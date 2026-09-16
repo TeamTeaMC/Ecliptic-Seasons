@@ -45,9 +45,7 @@
     ]
   ],
   "rewards": {
-    "loot": [
-      "eclipticseasons:gifts/spring_greenhouse_essence"
-    ]
+    "loot": "eclipticseasons:gifts/spring_greenhouse_essence"
   },
   "sends_telemetry_event": true
 }

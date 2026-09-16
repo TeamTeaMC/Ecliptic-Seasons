@@ -29,11 +29,11 @@ import java.util.function.Supplier;
 
 public abstract class ESClientDataMapProvider<T> implements DataProvider {
 
-    private final PackOutput output;
+    protected final PackOutput output;
     protected final String modid;
 
     protected final Map<Identifier, Supplier<T>> outMap;
-    private final String type;
+    protected final String type;
     private final Codec<T> codec;
     protected CompletableFuture<HolderLookup.Provider> registries;
 

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:broom"
+        "recipes": "eclipticseasons:broom"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

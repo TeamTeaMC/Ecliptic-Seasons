@@ -1,8 +1,8 @@
 package com.teamtea.eclipticseasons.client.gui;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;

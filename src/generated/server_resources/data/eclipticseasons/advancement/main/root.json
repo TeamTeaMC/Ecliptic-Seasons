@@ -22,9 +22,7 @@
     ]
   ],
   "rewards": {
-    "loot": [
-      "eclipticseasons:gifts/snowless_hometown"
-    ]
+    "loot": "eclipticseasons:gifts/snowless_hometown"
   },
   "sends_telemetry_event": true
 }

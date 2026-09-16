@@ -84,10 +84,10 @@ public class SeasonSensorBlock extends SimpleHorizontalEntityBlock {
         super.createBlockStateDefinition(builder.add(SEASON, POWER, AUTO, ON_SIGNAL));
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(SeasonSensorBlock::new);
-    }
+    // @Override
+    // protected MapCodec<? extends BaseEntityBlock> codec() {
+    //     return simpleCodec(SeasonSensorBlock::new);
+    // }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {

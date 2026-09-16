@@ -11,15 +11,17 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
 import java.util.function.BiConsumer;
 
 public record EclipticSeasonsGiftLootTables (
-        HolderLookup.Provider registries) implements LootTableSubProvider{
+       LootTableSubProvider.Context output) implements LootTableSubProvider{
+
 
     @Override
-    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
+    public void run() {
         output.accept(
                 ESLootTables.spring_greenhouse_essence,
                 LootTable.lootTable()
@@ -27,7 +29,7 @@ public record EclipticSeasonsGiftLootTables (
                                 LootPool.lootPool()
                                         .when((SeasonalSimulationLevelLootCondition.instance(SeasonalSimulationLevel.AGRICULTURE)))
                                         // .when(SeasonCondition.builder(SeasonCondition.Slice.builder().season(Season.SPRING).build()))
-                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .setRolls(ContextIntProviders.exactly(1))
                                         .add(LootItem.lootTableItem(ItemRegistry.spring_greenhouse_essence_item.get()).setWeight(10))
                         )
         );
@@ -38,7 +40,7 @@ public record EclipticSeasonsGiftLootTables (
                         .withPool(
                                 LootPool.lootPool()
                                         .when((SeasonalSimulationLevelLootCondition.instance(SeasonalSimulationLevel.AGRICULTURE)))
-                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .setRolls(ContextIntProviders.exactly(1))
                                         .add(LootItem.lootTableItem(ItemRegistry.summer_greenhouse_essence_item.get()).setWeight(10))
                         )
         );
@@ -49,7 +51,7 @@ public record EclipticSeasonsGiftLootTables (
                         .withPool(
                                 LootPool.lootPool()
                                         .when((SeasonalSimulationLevelLootCondition.instance(SeasonalSimulationLevel.AGRICULTURE)))
-                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .setRolls(ContextIntProviders.exactly(1))
                                         .add(LootItem.lootTableItem(ItemRegistry.autumn_greenhouse_essence_item.get()).setWeight(10))
                         )
         );
@@ -60,7 +62,7 @@ public record EclipticSeasonsGiftLootTables (
                         .withPool(
                                 LootPool.lootPool()
                                         .when((SeasonalSimulationLevelLootCondition.instance(SeasonalSimulationLevel.AGRICULTURE)))
-                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .setRolls(ContextIntProviders.exactly(1))
                                         .add(LootItem.lootTableItem(ItemRegistry.winter_greenhouse_essence_item.get()).setWeight(10))
                         )
         );
@@ -70,12 +72,11 @@ public record EclipticSeasonsGiftLootTables (
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
-                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .setRolls(ContextIntProviders.exactly(1))
                                         .add(LootItem.lootTableItem(ItemRegistry.snowless_hometown.get()).setWeight(10))
                         )
         );
 
 
     }
-
 }

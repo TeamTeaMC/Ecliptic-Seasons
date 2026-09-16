@@ -47,12 +47,12 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
     public static final IntegerProperty SEASON_ON = BlockStateProperties.POWER;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
     public static final int MAX_STAGE = 3;
-    public static final MapCodec<GreenHouseCoreBlock> CODEC = RecordCodecBuilder.mapCodec(
-            blockInstance -> blockInstance.group(
-                            ESExtraCodec.SEASON.fieldOf("season").forGetter(GreenHouseCoreBlock::getSeason),
-                            propertiesCodec())
-                    .apply(blockInstance, GreenHouseCoreBlock::new)
-    );
+    // public static final MapCodec<GreenHouseCoreBlock> CODEC = RecordCodecBuilder.mapCodec(
+    //         blockInstance -> blockInstance.group(
+    //                         ESExtraCodec.SEASON.fieldOf("season").forGetter(GreenHouseCoreBlock::getSeason),
+    //                         propertiesCodec())
+    //                 .apply(blockInstance, GreenHouseCoreBlock::new)
+    // );
 
     private final Season season;
 
@@ -71,10 +71,6 @@ public class GreenHouseCoreBlock extends SimpleEntityBlock {
         return state.getValue(AGE) == MAX_STAGE;
     }
 
-    @Override
-    protected @NonNull MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
-    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {

@@ -67,7 +67,7 @@ public class SolarBlockModel {
                 });
 
                 // element.faces.putAll(elementFace);
-                CuboidModelElement blockElement = new CuboidModelElement(element.from(), element.to(), elementFace, element.rotation(), element.shade(), element.lightEmission(), element.faceData());
+                CuboidModelElement blockElement = new CuboidModelElement(element.from(), element.to(), elementFace, element.rotation(), element.shadeDirectionOverride(), element.lightEmission());
                 elements.set(i, blockElement);
             }
             topGeometry = new UnbakedCuboidGeometry(elements);

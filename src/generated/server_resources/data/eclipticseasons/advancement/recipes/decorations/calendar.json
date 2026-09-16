@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:calendar"
+        "recipes": "eclipticseasons:calendar"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

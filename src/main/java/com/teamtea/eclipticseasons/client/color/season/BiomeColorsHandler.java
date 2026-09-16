@@ -17,7 +17,6 @@ import com.teamtea.eclipticseasons.api.misc.IBiomeTagHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IBiomeColorHolder;
 import com.teamtea.eclipticseasons.api.misc.client.IMapSlice;
 import com.teamtea.eclipticseasons.api.util.fast.Enum2ObjectMap;
-import com.teamtea.eclipticseasons.client.core.ExtraRenderDispatcher;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
 import com.teamtea.eclipticseasons.client.util.ColorHelper;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
@@ -26,14 +25,19 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.attribute.EnvironmentAttribute;
 import net.minecraft.world.attribute.EnvironmentAttributeMap;
 import net.minecraft.world.attribute.EnvironmentAttributes;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.ColorResolver;
+import net.minecraft.world.level.FoliageColor;
+import net.minecraft.world.level.GrassColor;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
+import org.joml.Vector3fc;
 import org.jspecify.annotations.NonNull;
 
 import java.awt.*;
@@ -257,8 +261,6 @@ public class BiomeColorsHandler {
 
     // 白桦在秋季通常会变色。它的叶子从绿色变成黄色或金色，有时甚至带有橙色的色调
     public static int getBirchColor(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos pos) {
-        // if(blockAndTintGetter instanceof IMapSlice mapSlice){
-        // }
         return getLeavesColor(FoliageColor.FOLIAGE_BIRCH, BirchLeavesColor.collectValues(), pos);
     }
 
@@ -309,20 +311,20 @@ public class BiomeColorsHandler {
         return color;
     }
 
-    public static int getSkyColor(Biome biome, int originColor) {
-        return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getSkyColorMap);
+    public static Vector3fc getSkyColor(Biome biome, Vector3fc originColor) {
+        return ARGB.vector3fFromRGB24(getBiomeColorInternal(biome, ARGB.colorFromVector3f(originColor), BiomeColorsHandler::getSkyColorMap));
     }
 
     public static int getWaterColor(Biome biome, int originColor) {
         return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getWaterColorMap);
     }
 
-    public static int getWaterFogColor(Biome biome, int originColor) {
-        return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getWaterFogColorMap);
+    public static Vector3fc getWaterFogColor(Biome biome, Vector3fc originColor) {
+        return ARGB.vector3fFromRGB24(getBiomeColorInternal(biome, ARGB.colorFromVector3f(originColor), BiomeColorsHandler::getWaterFogColorMap));
     }
 
-    public static int getFogColor(Biome biome, int originColor) {
-        return getBiomeColorInternal(biome, originColor, BiomeColorsHandler::getFogColorMap);
+    public static Vector3fc getFogColor(Biome biome, Vector3fc originColor) {
+        return ARGB.vector3fFromRGB24(getBiomeColorInternal(biome, ARGB.colorFromVector3f(originColor), BiomeColorsHandler::getFogColorMap));
     }
 
     public static Enum2ObjectMap<SolarTerm, ColorMode.Instance> getSkyColorMap(BiomeColor.Instance instance) {
@@ -402,22 +404,23 @@ public class BiomeColorsHandler {
         return false;
     }
 
+
     @FunctionalInterface
     public interface BiomeColorAttributeProvider {
-        int getColor(Biome biome, int originColor);
+        Vector3fc getColor(Biome biome, Vector3fc originColor);
     }
 
 
     public static EnvironmentAttributeMap buildEnvironmentAttributeMap(EnvironmentAttributeMap attributeMap, Biome biome) {
-        Map<EnvironmentAttribute<Integer>, Integer> colorMap = new IdentityHashMap<>();
-        List<Pair<EnvironmentAttribute<Integer>, BiomeColorAttributeProvider>> attributes = List.of(
+        Map<EnvironmentAttribute<Vector3fc>, Vector3fc> colorMap = new IdentityHashMap<>();
+        List<Pair<EnvironmentAttribute<Vector3fc>, BiomeColorAttributeProvider>> attributes = List.of(
                 Pair.of(EnvironmentAttributes.SKY_COLOR, BiomeColorsHandler::getSkyColor),
                 Pair.of(EnvironmentAttributes.FOG_COLOR, BiomeColorsHandler::getFogColor),
                 Pair.of(EnvironmentAttributes.WATER_FOG_COLOR, BiomeColorsHandler::getWaterFogColor)
         );
-        for (Pair<EnvironmentAttribute<Integer>, BiomeColorAttributeProvider> attribute : attributes) {
-            int originalColor = getOriginalColor(attributeMap, attribute.getFirst());
-            int newColor = attribute.getSecond().getColor(biome, originalColor);
+        for (Pair<EnvironmentAttribute<Vector3fc>, BiomeColorAttributeProvider> attribute : attributes) {
+            Vector3fc originalColor = getOriginalColor(attributeMap, attribute.getFirst());
+            Vector3fc newColor = attribute.getSecond().getColor(biome, originalColor);
             if (originalColor != newColor) {
                 colorMap.put(attribute.getFirst(), newColor);
             }
@@ -428,17 +431,12 @@ public class BiomeColorsHandler {
             return builder.build();
         }
         return null;
-        // EnvironmentAttributeMap.Builder builder = EnvironmentAttributeMap.builder().putAll(attributeMap);
-        // builder.set(EnvironmentAttributes.BLOCK_LIGHT_TINT, Color.ORANGE.getRGB());
-        // builder.set(EnvironmentAttributes.SKY_LIGHT_COLOR, Color.BLACK.getRGB());
-        // builder.set(EnvironmentAttributes.BLOCK_LIGHT_TINT, Color.BLACK.getRGB());
-        // return builder.build();
     }
 
-    public static @NonNull Integer getOriginalColor(EnvironmentAttributeMap returnValue, EnvironmentAttribute<Integer> attribute) {
+    public static @NonNull Vector3fc getOriginalColor(EnvironmentAttributeMap returnValue, EnvironmentAttribute<Vector3fc> attribute) {
         return Optional.ofNullable(returnValue.get(attribute))
                 .map(EnvironmentAttributeMap.Entry::argument)
-                .map(o -> o instanceof Integer i ? i : -1)
-                .orElse(-1);
+                .map(o -> o instanceof Vector3fc i ? i : ARGB.vector3fFromRGB24(-1))
+                .orElse(ARGB.vector3fFromRGB24(-1));
     }
 }

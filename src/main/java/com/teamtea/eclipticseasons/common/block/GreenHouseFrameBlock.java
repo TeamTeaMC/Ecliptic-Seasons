@@ -38,11 +38,6 @@ public class GreenHouseFrameBlock extends SimpleEntityBlock {
 
 
     @Override
-    protected @NonNull MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(GreenHouseFrameBlock::new);
-    }
-
-    @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
         return BlockEntityRegistry.greenhouse_core_container_entity_type.get().create(pPos, pState);
     }

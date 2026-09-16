@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:hyetometer"
+        "recipes": "eclipticseasons:hyetometer"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

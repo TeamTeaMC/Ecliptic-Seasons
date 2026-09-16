@@ -39,7 +39,7 @@ public class SeasonDefinitionRegistry {
     public static void bootstrap2(BootstrapContext<SeasonDefinition> context) {
         var holderGetter = context.lookup(Registries.BIOME);
         var blockHolderGetter = context.lookup(Registries.BLOCK);
-        var placedFeatureHolderGetter = context.lookup(Registries.CONFIGURED_FEATURE);
+        // var placedFeatureHolderGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
         var plains =holderGetter.get(Tags.Biomes.IS_TEMPERATE_OVERWORLD).get();
         Vec3i above = new Vec3i(0, 1, 0);

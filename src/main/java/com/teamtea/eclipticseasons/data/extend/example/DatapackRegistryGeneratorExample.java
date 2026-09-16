@@ -5,27 +5,33 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.registry.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class DatapackRegistryGeneratorExample extends DatapackBuiltinEntriesProvider {
+public class DatapackRegistryGeneratorExample{
 
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
+            .add(Registries.LOOT_TABLE, new ExampleLootTableProvider())
+            ;
+
+    public static final RegistrySetBuilder REGISTRY_SET_BUILDER_WORLD = new RegistrySetBuilder()
+            .add(Registries.BIOME,(e)->{})
             .add(ESRegistries.SNOW_TERM, SnowTermRegistry::bootstrap2)
             .add(ESRegistries.SEASON_DEFINITION, SeasonDefinitionRegistry::bootstrap2)
             .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap2)
             .add(ESRegistries.SPECIAL_DAYS, (c)->{})
             ;
 
-    public DatapackRegistryGeneratorExample(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
-    }
-
-    @Override
-    public String getName() {
-        return super.getName()+" Example";
-    }
+    // public DatapackRegistryGeneratorExample(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    //     super(output,"DatapackRegistryGeneratorExample", registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
+    // }
+    //
+    // @Override
+    // public String getName() {
+    //     return super.getName()+" Example";
+    // }
 }

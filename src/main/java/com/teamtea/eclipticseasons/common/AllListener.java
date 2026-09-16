@@ -4,7 +4,6 @@ package com.teamtea.eclipticseasons.common;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.api.constant.tag.EclipticBlockTags;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.event.CanPlantGrowEvent;
 import com.teamtea.eclipticseasons.api.event.SolarTermChangeEvent;
@@ -33,8 +32,6 @@ import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -63,7 +60,6 @@ import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 import java.util.Map;
-import java.util.Optional;
 
 @EventBusSubscriber(modid = EclipticSeasonsApi.MODID)
 public class AllListener {
@@ -121,7 +117,7 @@ public class AllListener {
 
             long newTime = level.getDefaultClockTime(),
                     oldDayTime = newTime;
-            ServerClockManager.ClockInstance instance = level.clockManager().getInstance(level.dimensionType().defaultClock().get());
+            ServerClockManager.ServerClockInstance instance = level.clockManager().getInstance(level.dimensionType().defaultClock().get());
             ClockTimeMarker timeMarker = instance.timeMarkers.get(ClockTimeMarkers.WAKE_UP_FROM_SLEEP);
             if (timeMarker != null) {
                 newTime = timeMarker.resolveTimeToMoveTo(instance.totalTicks);
@@ -269,7 +265,7 @@ public class AllListener {
         if (event.getEntity() instanceof ServerPlayer serverPlayer) {
             Level level = serverPlayer.level();
             if (level.getGameTime() % 20 == 0) {
-                ModAdvancements.parentNeedCriterion.get().trigger(serverPlayer);
+                ModAdvancements.PARENT_NEED.get().trigger(serverPlayer);
 
                 SolarDataManager data = SolarHolders.getSaveData(level);
                 if (data != null) {

@@ -29,7 +29,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class ESModFilePackResources extends AbstractPackResources {
+public class ESModFilePackResources extends AbstractPackMetadataResources implements PackResources {
     protected final IModFile modFile;
     protected final String sourcePath;
     private final PackMetadataSection bindSection;
@@ -178,16 +178,16 @@ public class ESModFilePackResources extends AbstractPackResources {
         }
 
         @Override
-        public @NonNull ESModFilePackResources openPrimary(@NonNull PackLocationInfo pLocation) {
+        public @NonNull ESModFilePackResources openMetadata(@NonNull PackLocationInfo pLocation) {
             return new ESModFilePackResources(pLocation, this.modFile, this.content.toString());
         }
 
         @Override
-        public @NonNull PackResources openFull(@NonNull PackLocationInfo pLocation, Pack.Metadata pMetadata) {
-            ESModFilePackResources packResources = this.openPrimary(pLocation);
+        public @NonNull Stream<PackResources> openResources(@NonNull PackLocationInfo pLocation, Pack.Metadata pMetadata) {
+            ESModFilePackResources packResources = this.openMetadata(pLocation);
             List<String> list = pMetadata.overlays();
             if (list.isEmpty()) {
-                return packResources;
+                return Stream.of(packResources);
             } else {
                 List<PackResources> list1 = new ArrayList<>(list.size());
 

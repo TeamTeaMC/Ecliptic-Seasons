@@ -54,10 +54,10 @@ public class PinWheelBlock extends SimpleHorizontalEntityBlock {
         return Shapes.empty();
     }
 
-    @Override
-    protected @NonNull MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(PinWheelBlock::new);
-    }
+    // @Override
+    // protected @NonNull MapCodec<? extends BaseEntityBlock> codec() {
+    //     return simpleCodec(PinWheelBlock::new);
+    // }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NonNull BlockPos pPos, @NonNull BlockState pState) {

@@ -4,8 +4,9 @@ import net.minecraft.core.HolderOwner;
 import org.jspecify.annotations.NonNull;
 
 public class DummyHolderOwner<T> implements HolderOwner<T> {
+
     @Override
-    public boolean canSerializeIn(@NonNull HolderOwner<T> context) {
+    public boolean canSerialize(HolderOwner<T> owner) {
         return false;
     }
 }

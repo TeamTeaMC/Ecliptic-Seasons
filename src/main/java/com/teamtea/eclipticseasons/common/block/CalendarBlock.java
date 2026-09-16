@@ -47,10 +47,10 @@ public class CalendarBlock extends WallPlacedBlock {
         registerDefaultState(defaultBlockState().setValue(MODE, DisplayMode.NORMAL));
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(CalendarBlock::new);
-    }
+    // @Override
+    // protected MapCodec<? extends BaseEntityBlock> codec() {
+    //     return simpleCodec(CalendarBlock::new);
+    // }
 
 
     @Override

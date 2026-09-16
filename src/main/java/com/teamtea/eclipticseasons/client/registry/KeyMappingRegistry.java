@@ -10,6 +10,6 @@ public class KeyMappingRegistry {
     public static final KeyMapping DEBUG_KEY = new KeyMapping(
             EclipticSeasons.rl("main/debug").toLanguageKey("keys"),
             ESKeyConflictContexts.DEBUG_CONTEXT, KeyModifier.CONTROL,
-            InputConstants.Type.KEYSYM, InputConstants.KEY_I, KeyMappingRegistry.MAIN
+            InputConstants.Type.KEYBOARD, InputConstants.KEY_I, KeyMappingRegistry.MAIN
     );
 }

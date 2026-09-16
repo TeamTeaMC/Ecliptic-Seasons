@@ -1,8 +1,12 @@
 package com.teamtea.eclipticseasons.data.extend.example;
 
+import com.teamtea.eclipticseasons.data.general.loot.EclipticSeasonsLootTableProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import org.jspecify.annotations.NonNull;
 
@@ -13,20 +17,16 @@ import java.util.concurrent.CompletableFuture;
 
 public class ExampleLootTableProvider extends LootTableProvider {
 
-    private final PackOutput generator;
+    // public static final RegistrySetBuilder RELOADABLE_BUILDER = new RegistrySetBuilder()
+    //         .add(Registries.LOOT_TABLE, new ExampleLootTableProvider());
 
-    public ExampleLootTableProvider(PackOutput generator, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        super(generator, Set.of(), List.of(new SubProviderEntry(
+
+    public ExampleLootTableProvider() {
+        super(BuiltInLootTables.all(), List.of(new SubProviderEntry(
                 ExampleGiftLootTables::new,
                 // Loot table generator for the 'empty' param set
                 LootContextParamSets.GIFT
-        )), lookupProvider);
-        this.generator = generator;
+        )));
 
-    }
-
-    @Override
-    public @NonNull String getName() {
-        return "Example " + super.getName();
     }
 }

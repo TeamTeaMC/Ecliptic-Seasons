@@ -17,6 +17,8 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.recipe.types.IRecipeType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.item.Items;
@@ -79,7 +81,7 @@ public class CauldronRecipeCategory implements IRecipeCategory<CauldronRecipe> {
         builder.addInvisibleIngredients(RecipeIngredientRole.INPUT)
                 .add(Items.CAULDRON);
         builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 86, 3)
-                .add(new SlotDisplay.TagSlotDisplay(recipe.tool()));
+                .add(new SlotDisplay.TagSlotDisplay(BuiltInRegistries.ITEM.get(recipe.tool()).orElse(HolderSet.emptyNamed(BuiltInRegistries.ITEM,recipe.tool()))));
         builder.addOutputSlot(109, 16)
                 .add(recipe.endItem());
     }

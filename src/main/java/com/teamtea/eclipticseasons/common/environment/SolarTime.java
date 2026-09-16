@@ -87,7 +87,7 @@ public class SolarTime {
 
             Holder<WorldClock> clock = worldClockHolder.get();
             int dayLengthInMinecraft = EclipticUtil.getDayLengthInMinecraft(level);
-            ServerClockManager.ClockInstance instance = serverClockManager.getInstance(clock);
+            ServerClockManager.ServerClockInstance instance = serverClockManager.getInstance(clock);
             Map<ResourceKey<ClockTimeMarker>, ClockTimeMarker> timeMarkers = instance.timeMarkers;
             HashSet<Map.Entry<ResourceKey<ClockTimeMarker>, ClockTimeMarker>> entries = new HashSet<>(timeMarkers.entrySet());
             for (Map.Entry<ResourceKey<ClockTimeMarker>, ClockTimeMarker> entry : entries) {

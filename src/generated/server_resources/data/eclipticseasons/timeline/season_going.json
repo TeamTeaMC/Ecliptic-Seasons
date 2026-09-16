@@ -2,6 +2,26 @@
   "clock": "minecraft:overworld",
   "period_ticks": 4032000,
   "tracks": {
+    "eclipticseasons:season": {
+      "keyframes": [
+        {
+          "ticks": 0,
+          "value": "spring"
+        },
+        {
+          "ticks": 1008000,
+          "value": "summer"
+        },
+        {
+          "ticks": 2016000,
+          "value": "autumn"
+        },
+        {
+          "ticks": 3024000,
+          "value": "winter"
+        }
+      ]
+    },
     "eclipticseasons:seasonal_world": {
       "keyframes": [
         {
@@ -783,26 +803,6 @@
         {
           "ticks": 3864000,
           "value": "greater_cold"
-        }
-      ]
-    },
-    "eclipticseasons:season": {
-      "keyframes": [
-        {
-          "ticks": 0,
-          "value": "spring"
-        },
-        {
-          "ticks": 1008000,
-          "value": "summer"
-        },
-        {
-          "ticks": 2016000,
-          "value": "autumn"
-        },
-        {
-          "ticks": 3024000,
-          "value": "winter"
         }
       ]
     }

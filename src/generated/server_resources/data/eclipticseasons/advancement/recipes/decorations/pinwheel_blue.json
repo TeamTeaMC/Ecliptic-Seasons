@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:pinwheel_blue"
+        "recipes": "eclipticseasons:pinwheel_blue"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

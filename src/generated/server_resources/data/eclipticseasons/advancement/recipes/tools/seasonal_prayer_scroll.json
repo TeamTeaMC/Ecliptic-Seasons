@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:seasonal_prayer_scroll"
+        "recipes": "eclipticseasons:seasonal_prayer_scroll"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -240,25 +240,6 @@ public class SimpleUtil {
     }
 
 
-    // TODO 元胞自动机
-    // https://zhuanlan.zhihu.com/p/621070746
-    private static int getWorldgenNoise(ServerPlayer player, ServerLevel level, BlockPos blockPos) {
-        int x = QuartPos.fromBlock(blockPos.getX());
-        int y = QuartPos.fromBlock(blockPos.getY());
-        int z = QuartPos.fromBlock(blockPos.getZ());
-        Climate.TargetPoint targetPoint = level.getChunkSource().randomState().sampler().sample(x, y, z);
-        float c = Climate.unquantizeCoord(targetPoint.continentalness());
-        float e = Climate.unquantizeCoord(targetPoint.erosion());
-        float t = Climate.unquantizeCoord(targetPoint.temperature());
-        float h = Climate.unquantizeCoord(targetPoint.humidity());
-        float w = Climate.unquantizeCoord(targetPoint.weirdness());
-
-        OverworldBiomeBuilder overworldBiomeBuilder = new OverworldBiomeBuilder();
-
-        return 0;
-    }
-
-
     public static float getTimeOfDay(Level level) {
         // if (false) {
         //     double d0 = Mth.frac((double) level.getDefaultClockTime() / 24000.0 - 0.25);

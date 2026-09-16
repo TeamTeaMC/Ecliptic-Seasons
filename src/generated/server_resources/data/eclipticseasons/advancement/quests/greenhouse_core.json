@@ -9,77 +9,89 @@
   "criteria": {
     "core_require_autumn": {
       "conditions": {
-        "location": [
-          {
-            "condition": "minecraft:location_check",
-            "predicate": {
-              "block": {
-                "blocks": "eclipticseasons:autumn_greenhouse_core"
+        "location": {
+          "type": "minecraft:all_of",
+          "terms": [
+            {
+              "type": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": "eclipticseasons:autumn_greenhouse_core"
+                }
               }
+            },
+            {
+              "type": "minecraft:match_tool",
+              "predicate": {}
             }
-          },
-          {
-            "condition": "minecraft:match_tool",
-            "predicate": {}
-          }
-        ]
+          ]
+        }
       },
       "trigger": "minecraft:item_used_on_block"
     },
     "core_require_spring": {
       "conditions": {
-        "location": [
-          {
-            "condition": "minecraft:location_check",
-            "predicate": {
-              "block": {
-                "blocks": "eclipticseasons:spring_greenhouse_core"
+        "location": {
+          "type": "minecraft:all_of",
+          "terms": [
+            {
+              "type": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": "eclipticseasons:spring_greenhouse_core"
+                }
               }
+            },
+            {
+              "type": "minecraft:match_tool",
+              "predicate": {}
             }
-          },
-          {
-            "condition": "minecraft:match_tool",
-            "predicate": {}
-          }
-        ]
+          ]
+        }
       },
       "trigger": "minecraft:item_used_on_block"
     },
     "core_require_summer": {
       "conditions": {
-        "location": [
-          {
-            "condition": "minecraft:location_check",
-            "predicate": {
-              "block": {
-                "blocks": "eclipticseasons:summer_greenhouse_core"
+        "location": {
+          "type": "minecraft:all_of",
+          "terms": [
+            {
+              "type": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": "eclipticseasons:summer_greenhouse_core"
+                }
               }
+            },
+            {
+              "type": "minecraft:match_tool",
+              "predicate": {}
             }
-          },
-          {
-            "condition": "minecraft:match_tool",
-            "predicate": {}
-          }
-        ]
+          ]
+        }
       },
       "trigger": "minecraft:item_used_on_block"
     },
     "core_require_winter": {
       "conditions": {
-        "location": [
-          {
-            "condition": "minecraft:location_check",
-            "predicate": {
-              "block": {
-                "blocks": "eclipticseasons:winter_greenhouse_core"
+        "location": {
+          "type": "minecraft:all_of",
+          "terms": [
+            {
+              "type": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": "eclipticseasons:winter_greenhouse_core"
+                }
               }
+            },
+            {
+              "type": "minecraft:match_tool",
+              "predicate": {}
             }
-          },
-          {
-            "condition": "minecraft:match_tool",
-            "predicate": {}
-          }
-        ]
+          ]
+        }
       },
       "trigger": "minecraft:item_used_on_block"
     }

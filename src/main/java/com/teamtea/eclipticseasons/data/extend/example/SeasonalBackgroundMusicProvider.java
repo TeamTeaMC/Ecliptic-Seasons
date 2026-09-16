@@ -22,14 +22,14 @@ import java.util.concurrent.CompletableFuture;
 public class SeasonalBackgroundMusicProvider extends ESClientBiomeDataMapProvider<SeasonalBackgroundMusic> {
     public SeasonalBackgroundMusicProvider(PackOutput output, String modid, CompletableFuture<HolderLookup.Provider> registries) {
         super(output, modid, registries, ClientJsonCacheListener.DIRECTORY_BACKGROUND_MUSIC, SeasonalBackgroundMusic.CODEC);
-        CompletableFuture<RegistrySetBuilder.PatchedRegistries> lookup = RegistryPatchGenerator
-                .createLookup(registries,
-                        new RegistrySetBuilder()
-                                .add(ESRegistries.SPECIAL_DAYS, (c) -> {
-                                })
-                );
-        lookup.thenApply(RegistrySetBuilder.PatchedRegistries::patches);
-        this.registries = lookup.thenApply(RegistrySetBuilder.PatchedRegistries::full);
+        // CompletableFuture<RegistrySetBuilder.PatchedRegistries> lookup = RegistryPatchGenerator
+        //         .createWorldLookup(registries,
+        //                 new RegistrySetBuilder()
+        //                         .add(ESRegistries.SPECIAL_DAYS, (c) -> {
+        //                         })
+        //         );
+        // lookup.thenApply(RegistrySetBuilder.PatchedRegistries::patches);
+        // this.registries = lookup.thenApply(RegistrySetBuilder.PatchedRegistries::full);
     }
 
     @Override

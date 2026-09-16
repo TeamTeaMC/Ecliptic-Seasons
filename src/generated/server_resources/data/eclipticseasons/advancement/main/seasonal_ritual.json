@@ -9,27 +9,30 @@
   "criteria": {
     "core_require": {
       "conditions": {
-        "location": [
-          {
-            "condition": "minecraft:location_check",
-            "predicate": {
-              "block": {
-                "blocks": [
-                  "eclipticseasons:spring_greenhouse_core",
-                  "eclipticseasons:summer_greenhouse_core",
-                  "eclipticseasons:autumn_greenhouse_core",
-                  "eclipticseasons:winter_greenhouse_core"
-                ]
+        "location": {
+          "type": "minecraft:all_of",
+          "terms": [
+            {
+              "type": "minecraft:location_check",
+              "predicate": {
+                "block": {
+                  "blocks": [
+                    "eclipticseasons:spring_greenhouse_core",
+                    "eclipticseasons:summer_greenhouse_core",
+                    "eclipticseasons:autumn_greenhouse_core",
+                    "eclipticseasons:winter_greenhouse_core"
+                  ]
+                }
+              }
+            },
+            {
+              "type": "minecraft:match_tool",
+              "predicate": {
+                "items": "eclipticseasons:seasonal_prayer_scroll"
               }
             }
-          },
-          {
-            "condition": "minecraft:match_tool",
-            "predicate": {
-              "items": "eclipticseasons:seasonal_prayer_scroll"
-            }
-          }
-        ]
+          ]
+        }
       },
       "trigger": "minecraft:item_used_on_block"
     },

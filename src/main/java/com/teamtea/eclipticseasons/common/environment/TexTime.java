@@ -5,6 +5,7 @@ import com.teamtea.eclipticseasons.common.core.solar.SolarAngelHelper;
 import com.teamtea.eclipticseasons.config.CommonConfig;
 import com.teamtea.eclipticseasons.common.core.map.MapChecker;
 import net.minecraft.core.Holder;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.attribute.EnvironmentAttributeSystem;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.clock.WorldClock;
@@ -64,7 +65,7 @@ public class TexTime {
                 (base, cacheTickId) -> {
                     return !CommonConfig.Season.daylightChange.get() || !MapChecker.isValidDimension(level)
                             ? base
-                            : getSunriseSunsetColor(level);
+                            : ARGB.vector4fFromARGB32(getSunriseSunsetColor(level));
                 }
         );
     }

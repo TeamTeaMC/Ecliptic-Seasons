@@ -12,13 +12,11 @@
         "item": {
           "items": "minecraft:milk_bucket"
         },
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {}
-          }
-        ]
+        "player": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {}
+        }
       },
       "trigger": "minecraft:using_item"
     },

@@ -9,6 +9,7 @@ import com.teamtea.eclipticseasons.config.CommonConfig;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -26,10 +27,6 @@ public class HumidityTankBlock extends SimpleEntityBlock implements SimpleHumidi
         super(properties);
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(HumidityTankBlock::new);
-    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos worldPosition, BlockState blockState) {
@@ -66,11 +63,11 @@ public class HumidityTankBlock extends SimpleEntityBlock implements SimpleHumidi
 
             BlockState targetState = level.getBlockState(mutable);
             while (tankPos.getY() - mutable.getY() > maxDepth
-                    || targetState.isAir() || !targetState.blocksMotion()) {
+                    || targetState.isAir() || !targetState.is(BlockTags.BLOCKS_MOTION)) {
                 targetState = level.getBlockState(mutable.setY(mutable.getY() - 1));
             }
 
-            if (targetState.isAir() || !targetState.blocksMotion()) continue;
+            if (targetState.isAir() || !targetState.is(BlockTags.BLOCKS_MOTION)) continue;
 
             if (targetState.getBlock() instanceof FarmlandBlock
                     && targetState.hasProperty(FarmlandBlock.MOISTURE)

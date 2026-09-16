@@ -9,7 +9,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:humidity_tank"
+        "recipes": "eclipticseasons:humidity_tank"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

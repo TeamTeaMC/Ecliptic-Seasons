@@ -108,7 +108,7 @@ public class ExtraRenderDispatcher {
                 List<BakedQuad> quads = object.getQuads(value);
                 for (BakedQuad quad : quads) {
                     mutableQuad.setFrom(quad);
-                    mutableQuad.setSprite(quad.materialInfo().sprite(), ChunkSectionLayer.CUTOUT, RenderTypes.cutoutMovingBlock());
+                    mutableQuad.setSprite(quad.materialInfo().sprite(), ChunkSectionLayer.CUTOUT, RenderTypes.cutoutMovingBlock(), RenderTypes.cutoutMovingBlock(), RenderTypes.cutoutMovingBlock());
                     List<BakedQuad> bakedQuads = map.computeIfAbsent(value, (p) -> new ArrayList<>());
                     bakedQuads.add(mutableQuad.toBakedQuad());
                 }
@@ -117,7 +117,7 @@ public class ExtraRenderDispatcher {
             for (BakedQuad quad : quads) {
                 mutableQuad.setFrom(quad);
                 // should check render type
-                mutableQuad.setSprite(quad.materialInfo().sprite(), ChunkSectionLayer.CUTOUT, RenderTypes.cutoutMovingBlock());
+                mutableQuad.setSprite(quad.materialInfo().sprite(), ChunkSectionLayer.CUTOUT, RenderTypes.cutoutMovingBlock(), RenderTypes.cutoutMovingBlock(), RenderTypes.cutoutMovingBlock());
                 List<BakedQuad> bakedQuads = map.computeIfAbsent(null, (p) -> new ArrayList<>());
                 bakedQuads.add(mutableQuad.toBakedQuad());
             }
@@ -518,7 +518,7 @@ public class ExtraRenderDispatcher {
 
             if (neighborState.isAir()) {
                 checkPos.move(Direction.DOWN);
-                if (!blockAndTintGetter.getBlockState(checkPos).blocksMotion()) {
+                if (!blockAndTintGetter.getBlockState(checkPos).is(BlockTags.BLOCKS_MOTION)) {
                     airNeighborCount++;
                 }
                 continue;
@@ -556,7 +556,7 @@ public class ExtraRenderDispatcher {
 
     public static BlockState shouldBlockAsSnowyState(BlockState state, BlockAndTintGetter blockAndTintGetter, BlockPos.MutableBlockPos mutableBlockPos) {
         if (!ClientConfig.Renderer.snowInFence.get()) return state;
-        // if (!state.blocksMotion() || !state.getFluidState().isEmpty())
+        // if (!state.is(BlockTags.BLOCKS_MOTION) || !state.getFluidState().isEmpty())
         //    return state;
         if (!(state.getBlock() instanceof SnowyBlock)) return state;
         int y = mutableBlockPos.getY();

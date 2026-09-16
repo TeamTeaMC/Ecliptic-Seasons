@@ -2,54 +2,34 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "conditions": [
-        {
-          "block": "eclipticseasons:summer_greenhouse_core",
-          "condition": "minecraft:block_state_property",
-          "properties": {
-            "age": "3"
-          }
+      "condition": {
+        "type": "minecraft:match_block",
+        "blocks": "eclipticseasons:summer_greenhouse_core",
+        "state": {
+          "age": "3"
         }
-      ],
+      },
       "entries": [
         {
           "type": "minecraft:alternatives",
           "children": [
             {
               "type": "minecraft:item",
-              "conditions": [
-                {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "predicates": {
-                      "minecraft:enchantments": [
-                        {
-                          "enchantments": "minecraft:silk_touch",
-                          "levels": {
-                            "min": 1
-                          }
-                        }
-                      ]
-                    }
-                  }
-                }
-              ],
+              "condition": "minecraft:tool/can_silk_touch",
               "name": "eclipticseasons:summer_greenhouse_core"
             },
             {
               "type": "minecraft:item",
-              "functions": [
-                {
-                  "count": 1.0,
-                  "function": "minecraft:set_count"
-                }
-              ],
+              "modifier": {
+                "type": "minecraft:set_count",
+                "count": 1
+              },
               "name": "eclipticseasons:summer_greenhouse_essence"
             }
           ]
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "eclipticseasons:blocks/summer_greenhouse_core"

@@ -4,10 +4,11 @@ import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.block.GreenHouseCoreBlock;
 import com.teamtea.eclipticseasons.common.registry.BlockRegistry;
 import com.teamtea.eclipticseasons.common.registry.ItemRegistry;
+import net.minecraft.advancements.predicates.BlockPredicate;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.data.loot.LootTableSubProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Item;
@@ -18,8 +19,8 @@ import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 import org.jspecify.annotations.NonNull;
 
 
@@ -31,8 +32,9 @@ import java.util.stream.Collectors;
 
 public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
 
-    public EclipticSeasonsBlockLootTables(HolderLookup.Provider provider) {
-        super(Set.of(), FeatureFlags.REGISTRY.allFlags(), provider);
+    public EclipticSeasonsBlockLootTables(LootTableSubProvider.Context output) {
+        // EXPLOSION_RESISTANT
+        super( Set.of(), FeatureFlags.REGISTRY.allFlags(), output);
     }
 
     private final Map<ResourceKey<LootTable>, LootTable.Builder> map = new HashMap<>();
@@ -105,11 +107,11 @@ public class EclipticSeasonsBlockLootTables extends BlockLootSubProvider {
         add(pBlock,
                 LootTable.lootTable()
                         .withPool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1.0F))
-                                .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(pBlock)
-                                        .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(GreenHouseCoreBlock.AGE, GreenHouseCoreBlock.MAX_STAGE)))
+                                .setRolls(ContextIntProviders.exactly(1))
+                                .when(MatchBlock.blockMatches(BlockPredicate.Builder.block().of(BuiltInRegistries.BLOCK, pBlock)
+                                                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(GreenHouseCoreBlock.AGE, GreenHouseCoreBlock.MAX_STAGE))))
                                 .add(LootItem.lootTableItem(pBlock)
-                                        .when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(pItem).apply(SetItemCountFunction.setCount(ConstantValue.exactly(1))))))
+                                        .when(this.hasSilkTouch()).otherwise(LootItem.lootTableItem(pItem).apply(SetItemCountFunction.setCount(ContextIntProviders.exactly(1))))))
         );
     }
 

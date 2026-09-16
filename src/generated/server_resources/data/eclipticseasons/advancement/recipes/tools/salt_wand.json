@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:salt_wand"
+        "recipes": "eclipticseasons:salt_wand"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

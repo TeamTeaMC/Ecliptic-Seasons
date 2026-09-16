@@ -6,8 +6,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.RandomState;
 import org.jspecify.annotations.NonNull;
 
 public class RiverBiomeResolver {
@@ -103,16 +101,16 @@ public class RiverBiomeResolver {
      * <p>Use the vanilla Climate.Sampler sampling pipeline instead of directly
      * evaluating DensityFunctions.
      *
-     * <p>{@link Climate.Sampler#sample(int, int, int)} is the entry point used by Minecraft for climate
+     * <p>Climate.Sampler#sample is the entry point used by Minecraft for climate
      * sampling and may be modified by world-generation or climate-related mods.
      * Directly calling sampler.temperature().compute() and other DensityFunctions
      * bypasses these modifications and can cause compatibility issues.
      */
-    public static Climate.@NonNull TargetPoint getClimateTargetPoint(RandomState randomState, BlockPos.MutableBlockPos blockPos) {
+    public static Climate.@NonNull TargetPoint getClimateTargetPoint(Climate.Sampler sampler, BlockPos.MutableBlockPos blockPos) {
         int qx = QuartPos.fromBlock(blockPos.getX());
         int qy = QuartPos.fromBlock(blockPos.getY());
         int qz = QuartPos.fromBlock(blockPos.getZ());
-        Climate.Sampler sampler = randomState.sampler();
+        // Climate.Sampler sampler = randomState.createClimateSampler(SamplerContext.EMPTY_UNCACHED);
         return sampler.sample(qx, qy, qz);
         // DensityFunction.SinglePointContext densityfunction$singlepointcontext = new DensityFunction.SinglePointContext(blockPos.getX(), blockPos.getY(), blockPos.getZ());
         // return Climate.target(

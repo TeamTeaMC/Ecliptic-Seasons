@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:thermometer"
+        "recipes": "eclipticseasons:thermometer"
       },
       "trigger": "minecraft:recipe_unlocked"
     },

@@ -42,7 +42,7 @@ public class GreenHouseCoreFrameRenderer implements BlockEntityRenderer<GreenHou
 
         poseStack.translate(0, 0.5, 0);
         useModel.x += 1;
-        submitNodeCollector.submitModelPart(useModel, poseStack, RenderTypes.entityTranslucentCullItemTarget(TryModel.greenhouse_core_container.sprite().withPrefix("textures/").withSuffix(".png")), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
+        submitNodeCollector.submitModelPart(useModel, poseStack, RenderTypes.entityTranslucent(TryModel.greenhouse_core_container.sprite().withPrefix("textures/").withSuffix(".png")), state.lightCoords, OverlayTexture.NO_OVERLAY, null);
         // useModel.render(poseStack, vertexconsumer2, state.lightCoords, OverlayTexture.NO_OVERLAY);
         poseStack.popPose();
     }

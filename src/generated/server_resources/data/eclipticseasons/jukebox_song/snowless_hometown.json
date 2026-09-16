@@ -1,8 +1,8 @@
 {
-  "sound_event": "eclipticseasons:record.snowless_hometown",
+  "comparator_output": 14,
   "description": {
     "translate": "jukebox_song.eclipticseasons.snowless_hometown"
   },
   "length_in_seconds": 103.0,
-  "comparator_output": 14
+  "sound_event": "eclipticseasons:record.snowless_hometown"
 }

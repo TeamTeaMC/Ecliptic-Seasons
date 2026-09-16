@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(BakedQuad.MaterialInfo.class)
 public abstract class MixinBakedQuad_MaterialInfo implements IExtendedMaterial {
     @ModifyVariable(
-            method = "of(Lnet/minecraft/client/resources/model/sprite/Material$Baked;Lcom/mojang/blaze3d/platform/Transparency;IZIZ)Lnet/minecraft/client/resources/model/geometry/BakedQuad$MaterialInfo;",
+            method = "of(Lnet/minecraft/client/resources/model/sprite/Material$Baked;Lcom/mojang/blaze3d/platform/Transparency;ILnet/minecraft/core/Direction;IZ)Lnet/minecraft/client/resources/model/geometry/BakedQuad$MaterialInfo;",
             at = @At(
                     value = "HEAD"
             ),

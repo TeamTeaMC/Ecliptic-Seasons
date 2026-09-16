@@ -4,18 +4,34 @@ package com.teamtea.eclipticseasons.data.general.datapack;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.common.registry.*;
+import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
+import com.teamtea.eclipticseasons.data.general.loot.EclipticSeasonsLootTableProvider;
+import com.teamtea.eclipticseasons.data.general.recipe.ESRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
+public class DatapackRegistryGenerator  {
 
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
+            // .add(Registries.TRIM_PATTERN,(c)->{})
+            // .add(Registries.DAMAGE_TYPE,(c)->{})
+            // .add(Registries.ENCHANTMENT,(c)->{})
+            // .add(Registries.PREDICATE,(c)->{})
+            .add(RecipeProvider.asBootstrap(ESRecipeProvider::new))
+            .add(Registries.ADVANCEMENT, new Advancements())
+            .add(Registries.LOOT_TABLE, new EclipticSeasonsLootTableProvider())
+            ;
+
+    public static final RegistrySetBuilder REGISTRY_SET_BUILDER_WORLD = new RegistrySetBuilder()
+            .add(Registries.WORLD_CLOCK,(c)->{})
+            .add(Registries.TIMELINE, TimeLineRegistry::bootstrap)
             .add(ESRegistries.WETTER, WetterStructureRegistry::bootstrap)
             .add(ESRegistries.BIOME_CLIMATE_SETTING, BiomeClimateSettingsRegistry::bootstrap)
             .add(ESRegistries.CROP, CropRegistry::bootstrap)
@@ -27,15 +43,8 @@ public class DatapackRegistryGenerator extends DatapackBuiltinEntriesProvider {
             .add(ESRegistries.SEASON_CYCLE, SeasonCycleRegistry::bootstrap)
             .add(Registries.JUKEBOX_SONG, SongRegistry::bootstrap)
             .add(ESRegistries.EXTRA_INFO, ESSortInfoRegistry::bootstrap)
-            .add(Registries.TIMELINE, TimeLineRegistry::bootstrap)
             .add(ESRegistries.WEATHER_EFFECT, WeatherEffectRegistry::bootstrap)
             .add(ESRegistries.BIOME_RAIN, BiomeRainRegistry::bootstrap)
             .add(ESRegistries.SPECIAL_DAYS, SpecialDaysRegistry::bootstrap)
             ;
-
-    public DatapackRegistryGenerator(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
-    }
-
-
 }

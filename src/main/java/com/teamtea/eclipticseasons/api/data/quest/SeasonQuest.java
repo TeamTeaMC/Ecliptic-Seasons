@@ -14,7 +14,6 @@ import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
-import net.minecraft.core.component.DataComponentExactPredicate;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.tags.TagKey;
@@ -25,10 +24,9 @@ import net.minecraft.world.item.trading.TradeCost;
 import net.minecraft.world.item.trading.VillagerTrade;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.predicates.AllOfCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ContextFloatProviders;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,16 +83,17 @@ public record SeasonQuest(
 
         return new VillagerTrade(
                 toTradeCost(need.get(0)),
-                need.size() > 1 ? Optional.of(toTradeCost(need.get(1))) : Optional.empty(),
+                need.size() > 1 ? Optional.of(toTradeCost(need.get(1))) : Optional.<TradeCost>empty(),
                 award.getFirst(),
-                max_count.orElse(1),
-                100,
-                0.0F,
-                Optional.of(AllOfCondition.allOf(
+                ContextIntProviders.max(ContextIntProviders.exactly(max_count.orElse(1))),
+                ContextIntProviders.exactly(100),
+                ContextFloatProviders.exactly(0f),
+                Optional.of(Holder.direct(AllOfCondition.allOf(
                         createSeasonCondition(),
                         LootItemRandomChanceCondition.randomChance(0.56f)
-                ).build()),
-                List.of()
+                ).build())),
+                Optional.empty(),
+                Optional.empty()
         );
     }
 
@@ -116,10 +115,7 @@ public record SeasonQuest(
 
         return new TradeCost(
                 item,
-                new UniformGenerator(
-                        new ConstantValue(min),
-                        new ConstantValue(max)
-                ),
+                ContextIntProviders.between(min,max),
                 predicate.components().exact()
         );
     }

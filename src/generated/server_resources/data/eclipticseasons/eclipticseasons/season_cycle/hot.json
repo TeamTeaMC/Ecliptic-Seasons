@@ -1,19 +1,5 @@
 {
-  "biomes": {
-    "values": [
-      {
-        "values": [
-          "#eclipticseasons:agro/hot"
-        ],
-        "type": "neoforge:or"
-      },
-      {
-        "value": "#eclipticseasons:rain/monsoonal",
-        "type": "neoforge:not"
-      }
-    ],
-    "type": "neoforge:and"
-  },
+  "biomes": "#eclipticseasons:agro/hot",
   "phases": {
     "solar_terms": {
       "beginning_of_spring": "eclipticseasons:hot_beginning_of_spring",

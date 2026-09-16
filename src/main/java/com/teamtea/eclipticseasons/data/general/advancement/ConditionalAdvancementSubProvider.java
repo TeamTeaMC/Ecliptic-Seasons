@@ -1,28 +1,28 @@
 package com.teamtea.eclipticseasons.data.general.advancement;
 
+import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.advancements.AdvancementSubProvider;
+import net.minecraft.data.worldgen.BootstrapContext;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Consumer;
 
-public interface ConditionalAdvancementSubProvider
+public abstract class ConditionalAdvancementSubProvider
         extends AdvancementSubProvider {
 
-    void generate(
+    protected ConditionalAdvancementSubProvider(BootstrapContext<Advancement> output) {
+        super(output);
+    }
+
+    abstract void generate(
             HolderLookup.Provider registries,
-            ConditionalAdvancementOutput output
+            BootstrapContext<Advancement> output
     );
 
     @Override
-    default void generate(
-            HolderLookup.@NonNull Provider registries,
-            @NonNull Consumer<AdvancementHolder> output
-    ) {
-        generate(
-                registries,
-                (advancement, conditions) -> output.accept(advancement)
-        );
+    public void generate() {
+        throw new UnsupportedOperationException();
     }
 }

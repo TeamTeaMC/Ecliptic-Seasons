@@ -44,7 +44,7 @@ public class ReUVBakedQuad {
         // Direction direction1 = getDirection();
         mutableQuad.setFrom(quad);
         // mutableQuad.setSprite(texture.)
-        mutableQuad.setSprite(texture, ChunkSectionLayer.CUTOUT, RenderTypes.cutoutMovingBlock());
+        mutableQuad.setSprite(texture, ChunkSectionLayer.CUTOUT, RenderTypes.cutoutMovingBlock(), RenderTypes.cutoutMovingBlock(), RenderTypes.cutoutMovingBlock());
         // if(true)return;
 
         float x0 = quad.position0().x();

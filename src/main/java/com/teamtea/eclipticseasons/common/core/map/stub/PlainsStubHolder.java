@@ -2,21 +2,20 @@ package com.teamtea.eclipticseasons.common.core.map.stub;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderOwner;
-import net.minecraft.core.HolderSet;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.biome.*;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * A dummy {@link Holder.Reference} implementation used strictly as a compile-time or runtime 
- * safety net (stub/fallback). This prevents NullPointerExceptions or game crashes when an abnormal 
+ * A dummy {@link Reference} implementation used strictly as a compile-time or runtime
+ * safety net (stub/fallback). This prevents NullPointerExceptions or game crashes when an abnormal
  * or uninitialized {@link net.minecraft.world.level.Level} context fails to provide a valid registry access.
  */
 public class PlainsStubHolder extends Holder.Reference<Biome> {
@@ -24,7 +23,7 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
     /**
      * Emergency fallback instance representing the standard Plains biome.
      */
-    public static final Holder.Reference<Biome> PLAINS = new PlainsStubHolder(
+    public static final Reference<Biome> PLAINS = new PlainsStubHolder(
             Type.STAND_ALONE,
             new DummyHolderOwner<>(),
             Biomes.PLAINS,
@@ -32,10 +31,10 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
     );
 
     /**
-     * Emergency fallback instance representing the Void (The Void) biome, 
+     * Emergency fallback instance representing the Void (The Void) biome,
      * typically used for empty dimensions or unconstructed world contexts.
      */
-    public static final Holder.Reference<Biome> VOID = new PlainsStubHolder(
+    public static final Reference<Biome> VOID = new PlainsStubHolder(
             Type.STAND_ALONE,
             new DummyHolderOwner<>(),
             Biomes.THE_VOID,
@@ -43,8 +42,8 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
     );
 
     private PlainsStubHolder(Type type, HolderOwner<Biome> owner,
-                                @Nullable ResourceKey<Biome> key,
-                                @Nullable Biome value) {
+                             @Nullable ResourceKey<Biome> key,
+                             @Nullable Biome value) {
         super(type, owner, key, value);
     }
 
@@ -71,10 +70,10 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
                 .hasPrecipitation(true)
                 .temperature(temperature)
                 .downfall(0.5f)
-                .setAttribute(EnvironmentAttributes.SKY_COLOR, OverworldBiomes.calculateSkyColor(temperature))
+                .setAttribute(EnvironmentAttributes.SKY_COLOR, ARGB.vector3fFromRGB24(OverworldBiomes.calculateSkyColor(temperature)))
                 .specialEffects(new BiomeSpecialEffects.Builder().waterColor(DEFAULT_WATER_COLOR).build())
                 .mobSpawnSettings(new MobSpawnSettings.Builder().build())
-                .generationSettings(new BiomeGenerationSettings(HolderSet.empty(), List.of()));
+                .generationSettings(new BiomeGenerationSettings.PlainBuilder().build());
     }
 
     /**
@@ -85,9 +84,9 @@ public class PlainsStubHolder extends Holder.Reference<Biome> {
                 .hasPrecipitation(false)
                 .temperature(0.5f)
                 .downfall(0.0f)
-                .setAttribute(EnvironmentAttributes.SKY_COLOR, 8103167) // Standard sky color for the void
+                .setAttribute(EnvironmentAttributes.SKY_COLOR, ARGB.vector3fFromRGB24(OverworldBiomes.calculateSkyColor(8103167))) // Standard sky color for the void
                 .specialEffects(new BiomeSpecialEffects.Builder().waterColor(DEFAULT_WATER_COLOR).build())
                 .mobSpawnSettings(new MobSpawnSettings.Builder().build())
-                .generationSettings(new BiomeGenerationSettings(HolderSet.empty(), List.of()));
+                .generationSettings(new BiomeGenerationSettings.PlainBuilder().build());
     }
 }

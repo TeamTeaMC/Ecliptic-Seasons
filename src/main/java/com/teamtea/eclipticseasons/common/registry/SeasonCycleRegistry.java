@@ -49,7 +49,7 @@ public class SeasonCycleRegistry {
     public static void bootstrap(BootstrapContext<SeasonCycle> context) {
         HolderGetter<Biome> getter = context.lookup(Registries.BIOME);
         HolderGetter<SeasonPhase> lookuped = context.lookup(ESRegistries.SEASON_PHASE);
-        var lazyLookup = new AgroClimateRegistry.BiomeRegistryLookup<>(getter,Registries.BIOME);
+        var lazyLookup = new AgroClimateRegistry.BiomeRegistryLookup<>(getter, Registries.BIOME);
 
         context.register(MONSOON, new SeasonCycle(
                 // and( getter.getOrThrow(Tags.Biomes.IS_HOT_OVERWORLD),
@@ -140,8 +140,7 @@ public class SeasonCycleRegistry {
         ));
 
         context.register(HOT, new SeasonCycle(
-                and(getter.getOrThrow(ClimateTypeBiomeTags.HOT_REGION),
-                        not(lazyLookup, getter.getOrThrow(ClimateTypeBiomeTags.MONSOONAL))),
+                getter.getOrThrow(ClimateTypeBiomeTags.HOT_REGION),
                 SolarTermValueMap.
                         <Holder<SeasonPhase>>builder()
                         .putSolarTerm(SolarTerm.BEGINNING_OF_SPRING, lookuped.getOrThrow(SeasonPhaseRegistry.HOT_BEGINNING_OF_SPRING))

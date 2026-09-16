@@ -11,23 +11,22 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
 import java.util.function.BiConsumer;
 
 public record ExampleGiftLootTables (
-        HolderLookup.Provider registries) implements LootTableSubProvider{
-
+        LootTableSubProvider.Context output) implements LootTableSubProvider{
 
     @Override
-    public void generate(BiConsumer<ResourceKey<LootTable>, LootTable.Builder> output) {
+    public void run() {
         output.accept(
                 ESLootTables.spring_greenhouse_essence,
                 LootTable.lootTable()
                         .withPool(
                                 LootPool.lootPool()
                                         .when(SeasonCondition.builder(SeasonCondition.Slice.builder().solarTerm(SolarTerm.BEGINNING_OF_SPRING).build()))
-                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .setRolls(ContextIntProviders.exactly(1))
                                         .add(LootItem.lootTableItem(ItemRegistry.spring_greenhouse_essence_item.get()).setWeight(10))
                         )
         );
@@ -38,7 +37,7 @@ public record ExampleGiftLootTables (
                         .withPool(
                                 LootPool.lootPool()
                                         .when(SeasonCondition.builder(SeasonCondition.Slice.builder().start(SolarTerm.AUTUMNAL_EQUINOX).end(SolarTerm.BEGINNING_OF_WINTER).build()))
-                                        .setRolls(ConstantValue.exactly(1.0F))
+                                        .setRolls(ContextIntProviders.exactly(1))
                                         .add(LootItem.lootTableItem(ItemRegistry.spring_greenhouse_essence_item.get()).setWeight(10))
                         )
         );

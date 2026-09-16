@@ -645,7 +645,7 @@ public class WeatherManager {
         boolean needThunder = weatherCheck.isThundering().isPresent();
         boolean needRain = weatherCheck.isRaining().isPresent();
         if (needThunder) {
-            var pos = pContext.getOptionalParameter(LootContextParams.ORIGIN);
+            var pos = pContext.getOptional(LootContextParams.ORIGIN);
             if (pos != null) {
                 boolean isThunderAt = isThunderAt(pContext.getLevel(), new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
                 if (weatherCheck.isThundering().get() != isThunderAt) {
@@ -654,7 +654,7 @@ public class WeatherManager {
             }
         }
         if (needRain) {
-            var pos = pContext.getOptionalParameter(LootContextParams.ORIGIN);
+            var pos = pContext.getOptional(LootContextParams.ORIGIN);
             if (pos != null) {
                 boolean isRainingAt = pContext.getLevel().isRainingAt(new BlockPos((int) pos.x, (int) pos.y + 1, (int) pos.z));
                 if (weatherCheck.isRaining().get() != isRainingAt) {
@@ -674,7 +674,7 @@ public class WeatherManager {
             // if (timeInTerm != 0) return;
 
             if (solarTermsRecordCa.addAndCheck(st)) {
-            } else ModAdvancements.solarTermsCriterion.get().trigger(serverPlayer);
+            } else ModAdvancements.SOLAR_TERMS.get().trigger(serverPlayer);
         }
     }
 

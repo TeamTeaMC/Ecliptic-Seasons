@@ -4,9 +4,9 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.datafixers.util.Pair;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
+import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.constant.solar.Season;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
-import com.teamtea.eclipticseasons.api.constant.solar.ISolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.client.render.ber.state.CalendarState;
 import com.teamtea.eclipticseasons.client.util.ClientCon;
@@ -15,9 +15,9 @@ import com.teamtea.eclipticseasons.common.block.base.SimpleHorizontalEntityBlock
 import com.teamtea.eclipticseasons.common.block.blockentity.CalendarBlockEntity;
 import com.teamtea.eclipticseasons.common.core.SolarHolders;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
+import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
 import com.teamtea.eclipticseasons.common.core.solar.extra.CalendarAstronomer;
 import com.teamtea.eclipticseasons.common.core.solar.extra.FixedSolarDataManagerLocal;
-import com.teamtea.eclipticseasons.common.core.solar.SolarTermHelper;
 import com.teamtea.eclipticseasons.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -35,15 +35,18 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.*;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.LightCoordsUtil;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.jspecify.annotations.Nullable;
 
-import java.awt.Color;
+import java.awt.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -108,9 +111,9 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                     if (displayMode == CalendarBlock.DisplayMode.SUB_SEASON) {
                         Season.Sub subSeason = EclipticSeasonsApi.getInstance().getSubSeason(ClientCon.getUseLevel());
                         MutableComponent translatable = Component.translatable("info.eclipticseasons.environment.solar_term.hint5", subSeason.getTranslation());
-                        drawText(1, translatable.getString(), new Color(subSeason.getSeason().getTextColor().getValue()).getRGB(), matrixStackIn, multiBufferSource);
+                        drawText(1, translatable.getString(), new Color(Optional.ofNullable(TextColor.fromLegacyFormat(subSeason.getSeason().getColor()).getValue()).orElse(-1)).getRGB(), matrixStackIn, multiBufferSource);
                     } else {
-                        drawText(1, seasonPhaseUsed.getPatternTranslation().getString(), new Color(seasonPhaseUsed.getTextColor().getValue()).getRGB(), matrixStackIn, multiBufferSource);
+                        drawText(1, seasonPhaseUsed.getPatternTranslation().getString(), new Color(Optional.ofNullable(TextColor.fromLegacyFormat(seasonPhaseUsed.getSeason().getColor()).getValue()).orElse(-1)).getRGB(), matrixStackIn, multiBufferSource);
                     }
 
                     if (st != SolarTerm.NONE) {
@@ -143,7 +146,7 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
                             case DAY ->
                                     string = Component.translatable("info.eclipticseasons.environment.solar_term.hint4", EclipticUtil.getNowSolarDay(ClientCon.getUseLevel())).getString();
                             // case SUB_SEASON -> string = "";
-                            case SUB_SEASON, MONTH ->
+                            case SUB_SEASON,MONTH ->
                                     string = Component.translatable("info.eclipticseasons.environment.solar_term.hint6", EclipticSeasonsApi.getInstance().getGregorianMonth(ClientCon.getUseLevel()).getTranslation(), EclipticSeasonsApi.getInstance().getDayOfMonth(ClientCon.getUseLevel())).getString();
                             default -> string = seasonPhaseUsed.getTittleTranslation().getString();
                         }
@@ -177,33 +180,22 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         // Lighting.setupForFlatItems();
         // GlStateManager._disableCull();
         Identifier location = fullIcon.withPrefix("textures/").withSuffix(".png");
-        // PoseStack.Pose last = matrixStackIn.last().copy();
-        txtBuffer.submitCustomGeometry(matrixStackIn, RenderTypes.entityCutout(location),
-                (pose, builder) ->
-                        blitRect(pose, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
-                                size / 2f,
-                                (float) -size * 0.6f,
-                                size * x,
-                                size * y,
-                                size,
-                                size,
-                                (int) (twidth / (isize / size)),
-                                (int) (theight / (isize / size)),
-                                true));
 
+        txtBuffer.submitCustomGeometry(matrixStackIn, RenderTypes.entityCutout(location),
+                (pose, builder) -> blitRect(pose, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
+                        size / 2f,
+                        (float) -size * 0.6f,
+                        size * x,
+                        size * y,
+                        size,
+                        size,
+                        (int) (twidth / (isize / size)),
+                        (int) (theight / (isize / size)),
+                        true));
         // VertexConsumer builder = txtBuffer.getBuffer(RenderTypes.entityCutout(location));
-        //
-        // // builder = txtBuffer.getBuffer(net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(null, false));
-        // blitRect(matrixStackIn, builder, combinedLightIn, OverlayTexture.NO_OVERLAY,
-        //         size / 2f,
-        //         (float) -size * 0.6f,
-        //         size * x,
-        //         size * y,
-        //         size,
-        //         size,
-        //         (int) (twidth / (isize / size)),
-        //         (int) (theight / (isize / size)),
-        //         true);
+
+        // builder = txtBuffer.getBuffer(net.minecraftforge.client.RenderTypeHelper.getEntityRenderType(null, false));
+
         // Lighting.setupFor3DItems();
 
         matrixStackIn.popPose();
@@ -252,8 +244,8 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         for (FormattedCharSequence charSequence : lines.reversed()) {
             int textWidth = font.width(charSequence);
             float drawX = x - textWidth / 2.0f;
-            txtBuffer.submitText(matrixStackIn, drawX, startY, charSequence, false,
-                    Font.DisplayMode.NORMAL, LightCoordsUtil.FULL_SKY, color, 0, 0);
+            txtBuffer.submitText(matrixStackIn,drawX, startY,charSequence,false,
+                    Font.DisplayMode.NORMAL, LightCoordsUtil.FULL_SKY,color,0,0 );
             // font.drawInBatch(charSequence, drawX, startY, color, false, matrixStackIn.last().pose(), txtBuffer,
             //         Font.DisplayMode.NORMAL, 0, LightCoordsUtil.FULL_SKY);
             startY -= lineHeight;
@@ -279,24 +271,20 @@ public class CalendarBlockEntityRenderer implements BlockEntityRenderer<Calendar
         }
         switch (d) {
             case SOUTH:
-                matrixStackIn.translate(0.5, 0.15, 1);
-                // matrixStackIn.mulPose(new Quaternion(0, 180, 180, true));
-                matrixStackIn.mulPose(XYZ.deg_to_rad(0, 180, 180));
+                matrixStackIn.translate(0.5F, 0.15F, 1.0F);
+                matrixStackIn.rotate(XYZ.deg_to_rad(0, 180, 180));
                 break;
             case NORTH:
-                // matrixStackIn.mulPose(new Quaternion(0, 0, 180, true));
-                matrixStackIn.mulPose(XYZ.deg_to_rad(0, 0, 180));
-                matrixStackIn.translate(-0.5, -0.15, 0);
+                matrixStackIn.rotate(XYZ.deg_to_rad(0, 0, 180));
+                matrixStackIn.translate(-0.5F, -0.15F, 0.0F);
                 break;
             case EAST:
-                // matrixStackIn.mulPose(new Quaternion(0, 270, 180, true));
-                matrixStackIn.mulPose(XYZ.deg_to_rad(0, 270, 180));
-                matrixStackIn.translate(-0.5, -0.15, -1);
+                matrixStackIn.rotate(XYZ.deg_to_rad(0, 270, 180));
+                matrixStackIn.translate(-0.5F, -0.15F, -1.0F);
                 break;
             case WEST:
-                // matrixStackIn.mulPose(new Quaternion(0, 90, 180, true));
-                matrixStackIn.mulPose(XYZ.deg_to_rad(0, 90, 180));
-                matrixStackIn.translate(0.5, -0.15, 0);
+                matrixStackIn.rotate(XYZ.deg_to_rad(0, 90, 180));
+                matrixStackIn.translate(0.5F, -0.15F, 0.0F);
                 break;
             default:
                 matrixStackIn.scale(0.01f, 0.01f, 0.01f);

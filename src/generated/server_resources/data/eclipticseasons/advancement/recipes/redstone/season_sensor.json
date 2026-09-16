@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:season_sensor"
+        "recipes": "eclipticseasons:season_sensor"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

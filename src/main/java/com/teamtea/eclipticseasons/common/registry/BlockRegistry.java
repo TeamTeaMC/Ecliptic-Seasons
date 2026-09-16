@@ -21,31 +21,31 @@ import java.util.stream.Collectors;
 public class BlockRegistry {
     public static final DeferredRegister.Blocks BLOCK_DEFERRED_REGISTER = DeferredRegister.createBlocks(EclipticSeasonsApi.MODID);
     // wind_chimes 风铃
-    public static final DeferredHolder<Block, Block> bamboo_wind_chimes = BLOCK_DEFERRED_REGISTER.registerBlock("bamboo_wind_chimes", (p) -> new WindChimesBlock(p.strength(0.5f).sound(SoundType.BAMBOO).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> paper_wind_chimes = BLOCK_DEFERRED_REGISTER.registerBlock("paper_wind_chimes", (p) -> new WindChimesBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> wind_chimes = BLOCK_DEFERRED_REGISTER.registerBlock("wind_chimes", (p) -> new WindChimesBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY).randomTicks()));
+    public static final DeferredHolder<Block, Block> bamboo_wind_chimes = BLOCK_DEFERRED_REGISTER.registerBlock("bamboo_wind_chimes", (p) -> new WindChimesBlock(p.strength(0.5f).sound(SoundType.BAMBOO).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> paper_wind_chimes = BLOCK_DEFERRED_REGISTER.registerBlock("paper_wind_chimes", (p) -> new WindChimesBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> wind_chimes = BLOCK_DEFERRED_REGISTER.registerBlock("wind_chimes", (p) -> new WindChimesBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED).randomTicks()));
 
     // paper_wind_mill 纸风车
-    public static final DeferredHolder<Block, Block> pinwheel_orange = BLOCK_DEFERRED_REGISTER.registerBlock("pinwheel_orange", (p) -> new PinWheelBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> pinwheel_lime = BLOCK_DEFERRED_REGISTER.registerBlock("pinwheel_lime", (p) -> new PinWheelBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> pinwheel_blue = BLOCK_DEFERRED_REGISTER.registerBlock("pinwheel_blue", (p) -> new PinWheelBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredHolder<Block, Block> pinwheel_orange = BLOCK_DEFERRED_REGISTER.registerBlock("pinwheel_orange", (p) -> new PinWheelBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> pinwheel_lime = BLOCK_DEFERRED_REGISTER.registerBlock("pinwheel_lime", (p) -> new PinWheelBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> pinwheel_blue = BLOCK_DEFERRED_REGISTER.registerBlock("pinwheel_blue", (p) -> new PinWheelBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED)));
 
     // calendar 日历
-    public static final DeferredHolder<Block, Block> calendar = BLOCK_DEFERRED_REGISTER.registerBlock("calendar", (p) -> new CalendarBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredHolder<Block, Block> calendar = BLOCK_DEFERRED_REGISTER.registerBlock("calendar", (p) -> new CalendarBlock(p.strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED)));
 
     // 湿度计
-    public static final DeferredHolder<Block, Block> hygrometer = BLOCK_DEFERRED_REGISTER.registerBlock("hygrometer", (p) -> new HygrometerBlock(p.strength(0.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY).randomTicks()));
+    public static final DeferredHolder<Block, Block> hygrometer = BLOCK_DEFERRED_REGISTER.registerBlock("hygrometer", (p) -> new HygrometerBlock(p.strength(0.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.POPPED).randomTicks()));
 
     // greenhouse_core 温室核心
-    public static final DeferredHolder<Block, Block> spring_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("spring_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.SPRING, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> summer_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("summer_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.SUMMER, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> autumn_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("autumn_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.AUTUMN, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> winter_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("winter_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.WINTER, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    public static final DeferredHolder<Block, Block> greenhouse_core_container = BLOCK_DEFERRED_REGISTER.registerBlock("greenhouse_core_container", (p) -> new GreenHouseFrameBlock(p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    public static final DeferredHolder<Block, Block> spring_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("spring_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.SPRING, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> summer_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("summer_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.SUMMER, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> autumn_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("autumn_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.AUTUMN, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> winter_greenhouse_core = BLOCK_DEFERRED_REGISTER.registerBlock("winter_greenhouse_core", (p) -> new GreenHouseCoreBlock(Season.WINTER, p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.POPPED)));
+    public static final DeferredHolder<Block, Block> greenhouse_core_container = BLOCK_DEFERRED_REGISTER.registerBlock("greenhouse_core_container", (p) -> new GreenHouseFrameBlock(p.strength(1.5f).sound(SoundType.AMETHYST).noOcclusion().pushReaction(PushReaction.POPPED)));
 
     // season_quest_sign 季节任务
-    // public static final DeferredHolder<Block, Block> season_quest_ceiling_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_ceiling_hanging_sign", QuestCeilingHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
-    // public static final DeferredHolder<Block, Block> season_quest_wall_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_wall_hanging_sign", QuestWallHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.DESTROY)));
+    // public static final DeferredHolder<Block, Block> season_quest_ceiling_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_ceiling_hanging_sign", QuestCeilingHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED)));
+    // public static final DeferredHolder<Block, Block> season_quest_wall_hanging_sign = BLOCK_DEFERRED_REGISTER.registerBlock("season_quest_wall_hanging_sign", QuestWallHangingSignBlock::new, () -> (BlockBehaviour.Properties.of().strength(0.5f).sound(SoundType.WOOD).noOcclusion().pushReaction(PushReaction.POPPED)));
 
     // humidity_control 湿度调节
     // public static final DeferredHolder<Block, Block> block_in_copper_grate_block = BLOCK_DEFERRED_REGISTER.registerBlock("block_in_copper_grate_block", (p) -> new BlockInCopperGrateBlock((WeatheringCopperGrateBlock) Blocks.COPPER_GRATE, p), () -> BlockBehaviour.Properties.ofFullCopy(Blocks.COPPER_GRATE));

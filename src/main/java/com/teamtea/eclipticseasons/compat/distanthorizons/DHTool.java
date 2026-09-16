@@ -22,6 +22,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
@@ -121,7 +122,7 @@ public class DHTool {
                 return snowColor;
                 // ColorUtil.setAlpha(instance.getBlockColor(dhBlockPos, iBiomeWrapper, fullDataSourceV2, BlockStateWrapper.fromBlockState(Blocks.SNOW.defaultBlockState(), instance)), 255)
             }
-            if (!queriedWrapper.isLiquid() && !queriedState.blockState.blocksMotion()) {
+            if (!queriedWrapper.isLiquid() && !queriedState.blockState.is(BlockTags.BLOCKS_MOTION)) {
                 if (i + 1 == targetDataIndex) {
                     return snowColor;
                 }

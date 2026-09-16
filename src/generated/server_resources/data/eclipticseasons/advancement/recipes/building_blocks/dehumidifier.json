@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:dehumidifier"
+        "recipes": "eclipticseasons:dehumidifier"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

@@ -12,18 +12,18 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-public class DatapackRegistryGeneratorExtra extends DatapackBuiltinEntriesProvider {
+public class DatapackRegistryGeneratorExtra {
 
     public static final RegistrySetBuilder REGISTRY_SET_BUILDER = new RegistrySetBuilder()
             .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap_extra)
             ;
 
-    public DatapackRegistryGeneratorExtra(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-        super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
-    }
-
-    @Override
-    public String getName() {
-        return super.getName()+" Extra";
-    }
+    // public DatapackRegistryGeneratorExtra(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    //     super(output, registries, REGISTRY_SET_BUILDER, Set.of(EclipticSeasonsApi.MODID));
+    // }
+    //
+    // @Override
+    // public String getName() {
+    //     return super.getName()+" Extra";
+    // }
 }

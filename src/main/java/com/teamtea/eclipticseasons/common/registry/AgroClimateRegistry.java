@@ -11,6 +11,7 @@ import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.climate.AgroClimaticZone;
 import com.teamtea.eclipticseasons.api.data.crop.GrowParameter;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.EmptyTagLookupWrapper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
@@ -220,7 +221,11 @@ public class AgroClimateRegistry {
 
         @Override
         public @NonNull Optional<Holder.Reference<T>> get(@NonNull ResourceKey<T> pResourceKey) {
-            return Optional.of(Holder.Reference.createStandAlone(this,pResourceKey));
+            HolderGetter<T> biomeHolderGetter1 = biomeHolderGetter;
+            if (biomeHolderGetter1 instanceof EmptyTagLookupWrapper<?> biomeEmptyTagLookupWrapper) {
+                biomeHolderGetter1 = ((EmptyTagLookupWrapper<T>) biomeHolderGetter1).parent();
+            }
+            return Optional.of(Holder.Reference.createStandAlone(biomeHolderGetter1, pResourceKey));
         }
 
         @Override
@@ -244,7 +249,7 @@ public class AgroClimateRegistry {
         }
 
         @Override
-        public boolean canSerializeIn(@NonNull HolderOwner<T> pOwner) {
+        public boolean canSerialize(@NonNull HolderOwner<T> pOwner) {
             return true;
         }
 

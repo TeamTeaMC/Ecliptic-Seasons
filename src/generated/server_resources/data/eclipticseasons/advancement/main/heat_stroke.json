@@ -8,7 +8,7 @@
   "parent": "eclipticseasons:main/root",
   "criteria": {
     "heat_stroke": {
-      "trigger": "eclipticseasons:heat_stroke"
+      "trigger": "eclipticseasons:solar_terms"
     }
   },
   "display": {

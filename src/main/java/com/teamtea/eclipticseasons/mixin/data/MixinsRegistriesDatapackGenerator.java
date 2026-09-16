@@ -8,6 +8,7 @@ import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Encoder;
+import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.data.extend.example.DatapackRegistryGeneratorExample;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
 import net.minecraft.util.Util;
@@ -29,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
@@ -40,20 +42,22 @@ import java.util.concurrent.CompletableFuture;
 @Mixin({RegistriesDatapackGenerator.class})
 public abstract class MixinsRegistriesDatapackGenerator {
 
-    @Shadow
-    @Final
-    private Map<ResourceKey<?>, List<ICondition>> conditions;
 
     @Inject(at = {@At("HEAD")}, method = {"lambda$dumpRegistryCap$2"}, cancellable = true)
-    private void eclipticseasons$lambda$dumpRegistryCap$11(PackOutput.PathProvider packoutput$pathprovider, CachedOutput output, DynamicOps ops, Codec conditionalCodec, Holder.Reference p_256105_, CallbackInfoReturnable<CompletableFuture> cir) {
-        if ("true".equals(System.getProperty("eclipticseasons.runs.runData")))
+    private static void eclipticseasons$lambda$dumpRegistryCap$11(PackOutput.PathProvider pathProvider, CachedOutput cache, DynamicOps writeOps, Codec conditionalCodec, java.util.Map<ResourceKey<?>, java.util.List<net.neoforged.neoforge.common.conditions.ICondition>> conditions, Holder.Reference e, CallbackInfoReturnable<CompletableFuture> cir) throws IllegalAccessException, NoSuchFieldException {
+        if ("true".equals(System.getProperty("eclipticseasons.runs.runData"))) {
+            Field field = pathProvider.getClass().getDeclaredField("kind");
+            field.setAccessible(true);
+            String kind = (String) field.get(pathProvider);
+            if (!kind.startsWith(EclipticSeasonsApi.MODID)) return;
             cir.setReturnValue(dumpValue2(
-                    packoutput$pathprovider.json(p_256105_.key().identifier()),
-                    output,
-                    ops,
+                    pathProvider.json(e.key().identifier()),
+                    cache,
+                    writeOps,
                     conditionalCodec,
-                    Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(conditions.getOrDefault(p_256105_.key(), java.util.List.of()), p_256105_.value()))
+                    Optional.of(new net.neoforged.neoforge.common.conditions.WithConditions<>(conditions.getOrDefault(e.key(), java.util.List.of()), e.value()))
             ));
+        }
     }
 
     @Unique

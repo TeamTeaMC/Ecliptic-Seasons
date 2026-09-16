@@ -37,10 +37,10 @@ public class WindChimesBlock extends SimpleHorizontalEntityBlock {
         super(properties);
     }
 
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(WindChimesBlock::new);
-    }
+    // @Override
+    // protected MapCodec<? extends BaseEntityBlock> codec() {
+    //     return simpleCodec(WindChimesBlock::new);
+    // }
 
 
     @Override

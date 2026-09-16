@@ -19,7 +19,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "eclipticseasons:block_in_wooden_grate_block"
+        "recipes": "eclipticseasons:block_in_wooden_grate_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

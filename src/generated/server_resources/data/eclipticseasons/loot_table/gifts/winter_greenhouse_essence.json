@@ -2,12 +2,10 @@
   "type": "minecraft:gift",
   "pools": [
     {
-      "conditions": [
-        {
-          "condition": "eclipticseasons:seasonal_simulation_level",
-          "level": "agriculture"
-        }
-      ],
+      "condition": {
+        "type": "eclipticseasons:seasonal_simulation_level",
+        "level": "agriculture"
+      },
       "entries": [
         {
           "type": "minecraft:item",
@@ -15,7 +13,7 @@
           "weight": 10
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ],
   "random_sequence": "eclipticseasons:gifts/winter_greenhouse_essence"
