@@ -32,7 +32,8 @@ displayName="${mod_name}" #mandatory
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 
 # A URL for the "homepage" for this mod, displayed in the mod UI
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+displayURL="https://ecliptic-seasons.readthedocs.io/en/latest/en/"
+issueTrackerURL="https://github.com/TeamTeaMC/Ecliptic-Seasons/issues"
 
 # A file name (in the root of the mod JAR) containing a logo for display
 # Change to `bannerFile` and/or (for square icons) `iconFile`.
