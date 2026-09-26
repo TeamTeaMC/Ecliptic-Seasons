@@ -70,6 +70,8 @@ public abstract class MixinBlockStateBase implements CustomRandomTick {
             )
     )
     private boolean eclipticseasons$allowRandomTick(Block instance, BlockState state, ServerLevel serverLevel, BlockPos pos, RandomSource randomSource) {
+        eclipticseasons$tick(asState(), serverLevel, pos);
+
         if (this instanceof IBlockStateFlagger flagger
                 && (flagger.forceTickControl()
                 || CommonConfig.isForceCropCompatMode())) {

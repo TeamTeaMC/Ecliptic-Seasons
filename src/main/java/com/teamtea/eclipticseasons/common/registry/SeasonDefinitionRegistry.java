@@ -41,7 +41,7 @@ public class SeasonDefinitionRegistry {
         var blockHolderGetter = context.lookup(Registries.BLOCK);
         // var placedFeatureHolderGetter = context.lookup(Registries.CONFIGURED_FEATURE);
 
-        var plains =holderGetter.get(Tags.Biomes.IS_TEMPERATE_OVERWORLD).get();
+        var plains = holderGetter.get(Tags.Biomes.IS_TEMPERATE_OVERWORLD).get();
         Vec3i above = new Vec3i(0, 1, 0);
         EmptyAboveCondition empty = EmptyAboveCondition.builder().above(true).build();
         List<EmptyAboveCondition> condition = List.of(empty);
@@ -89,7 +89,7 @@ public class SeasonDefinitionRegistry {
                                                         .state(Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.LOWER))
                                                         .build())
                                                 .multiBlock(MultiBlockSelector.Part.builder()
-                                                        .offset(Optional.of(new Vec3i(0,1,0)))
+                                                        .offset(Optional.of(new Vec3i(0, 1, 0)))
                                                         .state(Blocks.TALL_GRASS.defaultBlockState().setValue(DoublePlantBlock.HALF, DoubleBlockHalf.UPPER))
                                                         .build())
                                                 .build())
@@ -139,6 +139,22 @@ public class SeasonDefinitionRegistry {
                                         .fixedSeed(false)
                                         .chance(1 / 16f)
                                         .selector(BlockSelector.builder().build())
+                                        .build()
+                        ))
+                        .build()
+        ));
+
+
+        context.register(createKey("grass_block_to_podzol"), new SeasonDefinition(
+                Optional.of(plains),
+                SolarTermValueMap.<List<ChangeMode>>builder()
+                        .putSeason(Season.SPRING, List.of(
+                                ChangeMode.builder()
+                                        .original(BlockPredicate.Builder.block().of(blockHolderGetter, Blocks.GRASS_BLOCK).build())
+                                        .fixedSeed(true)
+                                        .fixedSeedChance(0.1f)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().state(Optional.of(Blocks.PODZOL.defaultBlockState())).weight(1).build())
                                         .build()
                         ))
                         .build()
