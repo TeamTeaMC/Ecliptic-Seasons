@@ -29,7 +29,7 @@ public class ClimateTypeFilters {
                     new RegistryFilter.Or<>(BiomeTags.IS_OVERWORLD)
             );
     public static final RegistryFilter<Biome> MONSOONAL = new RegistryFilter.TagHolder<>(BiomeTags.IS_SAVANNA);
-    public static final RegistryFilter<Biome> RAINLESS = new RegistryFilter.Or<>(BiomeTags.IS_BADLANDS, Tags.Biomes.IS_DESERT, Tags.Biomes.IS_CAVE, BiomeTags.IS_NETHER, BiomeTags.IS_END);
+    public static final RegistryFilter<Biome> RAINLESS = new RegistryFilter.ORNonePrecipitation<>(BiomeTags.IS_BADLANDS, Tags.Biomes.IS_DESERT, Tags.Biomes.IS_CAVE, BiomeTags.IS_NETHER, BiomeTags.IS_END);
     public static final RegistryFilter<Biome> ARID = new RegistryFilter.Empty<>();
     public static final RegistryFilter<Biome> DROUGHTY = new RegistryFilter.Empty<>();
     public static final RegistryFilter<Biome> SOFT = new RegistryFilter.Or<>(BiomeTags.IS_BEACH, BiomeTags.IS_OCEAN);
@@ -66,12 +66,12 @@ public class ClimateTypeFilters {
     }};
 
     public static final Map<TagKey<Biome>, RegistryFilter<Biome>> BIOME_PRESENT = new LinkedHashMap<>() {{
+        put(ClimateTypeBiomeTags.MONSOONAL, ClimateTypeFilters.MONSOONAL);
         put(ClimateTypeBiomeTags.RAINLESS, ClimateTypeFilters.RAINLESS);
         put(ClimateTypeBiomeTags.ARID, ClimateTypeFilters.ARID);
         put(ClimateTypeBiomeTags.DROUGHTY, ClimateTypeFilters.DROUGHTY);
         put(ClimateTypeBiomeTags.SOFT, ClimateTypeFilters.SOFT);
         put(ClimateTypeBiomeTags.RAINY, ClimateTypeFilters.RAINY);
-        put(ClimateTypeBiomeTags.MONSOONAL, ClimateTypeFilters.MONSOONAL);
         put(ClimateTypeBiomeTags.SEASONAL_HOT, ClimateTypeFilters.SEASONAL_HOT);
         put(ClimateTypeBiomeTags.SEASONAL_COLD, ClimateTypeFilters.SEASONAL_COLD);
         put(ClimateTypeBiomeTags.SEASONAL, ClimateTypeFilters.SEASONAL);

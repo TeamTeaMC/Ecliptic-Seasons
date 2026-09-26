@@ -1,9 +1,7 @@
 package com.teamtea.eclipticseasons.common.core.biome;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
-import com.teamtea.eclipticseasons.api.constant.climate.FlatRain;
-import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
-import com.teamtea.eclipticseasons.api.constant.climate.WeatherMode;
+import com.teamtea.eclipticseasons.api.constant.climate.*;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESEnchantmentTags;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
@@ -21,7 +19,6 @@ import com.teamtea.eclipticseasons.common.registry.ESRegistries;
 import com.teamtea.eclipticseasons.common.registry.EffectRegistry;
 import com.teamtea.eclipticseasons.common.registry.ModAdvancements;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.api.constant.climate.BiomeRain;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.api.util.SimpleUtil;
@@ -54,6 +51,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -280,6 +278,12 @@ public class WeatherManager {
                     Biome.Precipitation.SNOW : Biome.Precipitation.RAIN;
             if (biomeWeather.effect != null && biomeWeather.effect.value().shouldChangePrecipitation(level, biome, pos, false, precipitation))
                 precipitation = biomeWeather.effect.value().getModifiedPrecipitation(level, biome, pos, false, precipitation);
+            if (BiomeClimateManager.getTag(biome) == ClimateTypeBiomeTags.MONSOONAL) {
+                BiomeClimateSettings biomeClimateSettings = BiomeClimateManager.getBiomeClimateSettings(biome, !level.isClientSide());
+                if (biomeClimateSettings.getDownfall(solarTerm) <= biomeClimateSettings.getDownfall()) {
+                    precipitation = Biome.Precipitation.NONE;
+                }
+            }
             return precipitation;
         }
 
@@ -315,6 +319,12 @@ public class WeatherManager {
                 precipitation = biomeWeather.effect.value().getModifiedPrecipitation(level, biome, pos, true, precipitation);
             // if (biomeWeather.shouldClear())
             //     return Biome.Precipitation.NONE;
+            if (BiomeClimateManager.getTag(biome) == ClimateTypeBiomeTags.MONSOONAL) {
+                BiomeClimateSettings biomeClimateSettings = BiomeClimateManager.getBiomeClimateSettings(biome, !level.isClientSide());
+                if (biomeClimateSettings.getDownfall(solarTerm) <= biomeClimateSettings.getDownfall()) {
+                    precipitation = Biome.Precipitation.NONE;
+                }
+            }
             return precipitation;
         }
         return Biome.Precipitation.NONE;
@@ -659,6 +669,7 @@ public class WeatherManager {
 
 
     public static boolean agentAdvanceWeatherCycle(ServerLevel level, RandomSource random) {
+        if (!level.getGameRules().getBoolean(GameRules.RULE_WEATHER_CYCLE)) return false;
         // if (!MapChecker.isValidDimension(level)) {
         //     return true;
         // }

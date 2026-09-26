@@ -1,6 +1,10 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.15.1
+
+- Moved crop humidity controls to the Survival simulation level to evaluate whether they are worth keeping.
+
 ### 0.15.0
 
 - Added a new Seasonal Simulation Level option for adjusting the scope of seasonal gameplay with a single setting.
