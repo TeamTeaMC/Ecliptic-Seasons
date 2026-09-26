@@ -118,6 +118,22 @@ public class SeasonDefinitionRegistry {
                         ))
                         .build()
         ));
+
+
+        context.register(createKey("grass_block_to_podzol"), new SeasonDefinition(
+                Optional.of(plains),
+                SolarTermValueMap.<List<ChangeMode>>builder()
+                        .putSeason(Season.SPRING, List.of(
+                                ChangeMode.builder()
+                                        .original(FakeBlockPredicate.Builder.block().of(Blocks.GRASS_BLOCK).build())
+                                        .fixedSeed(true)
+                                        .fixedSeedChance(0.1f)
+                                        .chance(1 / 16f)
+                                        .selector(BlockSelector.builder().state(Optional.of(Blocks.PODZOL.defaultBlockState())).weight(1).build())
+                                        .build()
+                        ))
+                        .build()
+        ));
     }
 
 }

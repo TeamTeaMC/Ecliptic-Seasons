@@ -1,0 +1,23 @@
+{
+  "biomes": "minecraft:plains",
+  "changes": {
+    "seasons": {
+      "spring": {
+        "fixed_seed": true,
+        "fixed_seed_chance": 0.1,
+        "target": {
+          "blocks": "minecraft:grass_block"
+        },
+        "place": {
+          "weight": 1,
+          "block": {
+            "Properties": {
+              "snowy": "false"
+            },
+            "Name": "minecraft:podzol"
+          }
+        }
+      }
+    }
+  }
+}
