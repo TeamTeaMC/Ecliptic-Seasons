@@ -104,7 +104,7 @@ public interface RegistryFilter<T> {
         public List<? extends Holder<T>> toHolders(HolderLookup.RegistryLookup<T> biomes) {
             ArrayList<Holder<T>> holders = new ArrayList<>(filter.toHolders(biomes));
             if (biomes.key().equals(Registries.BIOME))
-                holders.addAll(biomes.listElements().filter(h -> !((Biome) h.value()).hasPrecipitation()).toList());
+                holders.addAll(biomes.listElements().filter(h -> !((Biome) h.value()).getModifiedClimateSettings().hasPrecipitation()).toList());
             return List.copyOf(Set.copyOf(holders));
         }
     }
