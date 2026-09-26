@@ -1,5 +1,10 @@
 > 1.21.1 will now receive bug fixes and compatibility updates only.
 > New features will primarily target newer Minecraft versions.
+
+### 0.15.1
+
+- Moved crop humidity controls to the Survival simulation level to evaluate whether they are worth keeping.
+
 ### 0.15.0
 
 - Added a new Seasonal Simulation Level option for adjusting the scope of seasonal gameplay with a single setting.

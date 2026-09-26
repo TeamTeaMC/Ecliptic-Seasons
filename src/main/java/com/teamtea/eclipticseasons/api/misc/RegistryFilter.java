@@ -2,9 +2,12 @@ package com.teamtea.eclipticseasons.api.misc;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,6 +90,22 @@ public interface RegistryFilter<T> {
         @Override
         public List<? extends Holder<T>> toHolders(Registry<T> registry) {
             return List.of();
+        }
+    }
+
+    public record ORNonePrecipitation<T>(Or<T> filter) implements RegistryFilter<T> {
+
+        @SafeVarargs
+        public ORNonePrecipitation(TagKey<T>... tags) {
+            this(new Or<>(tags));
+        }
+
+        @Override
+        public List<Holder<T>> toHolders(Registry<T> biomes) {
+            ArrayList<Holder<T>> holders = new ArrayList<>(filter.toHolders(biomes));
+            if (biomes.key().equals(Registries.BIOME))
+                holders.addAll(biomes.holders().filter(h -> !((Biome) h.value()).hasPrecipitation()).toList());
+            return List.copyOf(Set.copyOf(holders));
         }
     }
 }

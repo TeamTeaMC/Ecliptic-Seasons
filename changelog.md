@@ -1,0 +1,4 @@
+- Moved crop humidity controls to the Survival simulation level to evaluate whether they are worth keeping.
+- Adjusted the order of built-in tag reassignment to prevent rainless biomes from being treated as rainy and receiving initial snow cover.
+- Fixed Sparse Savannas experiencing rain throughout the year.
+- Fixed solar-term weather continuing to run when vanilla doWeatherCycle game rule was set to false.
