@@ -1,0 +1,23 @@
+{
+  "biomes": "#c:is_temperate/overworld",
+  "changes": {
+    "seasons": {
+      "spring": {
+        "target": {
+          "blocks": "minecraft:grass_block"
+        },
+        "place": {
+          "block": {
+            "Properties": {
+              "snowy": "false"
+            },
+            "Name": "minecraft:podzol"
+          },
+          "weight": 1
+        },
+        "fixed_seed": true,
+        "fixed_seed_chance": 0.1
+      }
+    }
+  }
+}
