@@ -1,3 +1,7 @@
+### 0.15.1
+
+- Moved crop humidity controls to the Survival simulation level to evaluate whether they are worth keeping.
+
 ### 0.15.0-rc-4
 
 - The configuration screen now changes its button style based on the current season.
