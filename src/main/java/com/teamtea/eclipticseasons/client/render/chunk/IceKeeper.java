@@ -38,16 +38,18 @@ public class IceKeeper {
         BlockPos blockPos = player.blockPosition();
         // player.getBoundingBoxForCulling()
         if (MapChecker.getHeight(level, blockPos) != blockPos.getY()) return;
-        BlockState water = Blocks.WATER.defaultBlockState();
-        if (water.getBlock() instanceof SimpleWaterloggedBlock) return;
-        if (!ExtraRenderDispatcher.maySnowyAt(level, null, water, blockPos, level.getRandom(), water.getSeed(blockPos)))
+
+        BlockState state = level.getBlockState(blockPos);
+        FluidState fluid = state.getFluidState();
+        if (!fluid.isSourceOfType(Fluids.WATER)) return;
+        if (state.getBlock() instanceof SimpleWaterloggedBlock) return;
+        if (!ExtraRenderDispatcher.maySnowyAt(level, null, state, blockPos, level.getRandom(), state.getSeed(blockPos)))
             return;
 
         if (!ICE_SHOULD_BE_IGNORED.contains(blockPos.asLong())) {
             BlockPos above = blockPos.above();
             if (ClientConfig.Debug.frozenWaterCheckLight.get() && !ExtraRenderDispatcher.notTooBright(level, null, blockPos))
                 return;
-            if (!level.getBlockState(blockPos).getFluidState().isSource()) return;
             ICE_SHOULD_BE_IGNORED.add(blockPos.asLong());
             try {
                 WorldRenderer.setSectionDirtyWithNeighbors(SectionPos.of(player));
