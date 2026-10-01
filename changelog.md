@@ -1,1 +1,2 @@
-- Fixed a bug where extra block ticks were accidentally removed during the 0.14.5 optimization update.
+- Adjusted the description of the solar-term weather model
+- Added Korean translation, contributed by @Strawberry-Sushi in #197

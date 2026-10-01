@@ -424,7 +424,7 @@ public class CommonConfig {
 
         private static void load(ModConfigSpec.Builder builder) {
             builder.push("Weather");
-            useSolarWeather = builder.comment("Enable localized weather patterns where rain or sun is determined per-biome.")
+            useSolarWeather = builder.comment("Weather changes in many ways with the solar terms. Unlike vanilla, weather in this mod no longer follows a fixed sequence (for example, clear → rain → clear). Instead, the next weather period can develop from the current one in multiple ways, so it may be the same as or different from the current weather. As a result, there may be springs of continuous rain or dry, snowless winters.")
                     .define("UseSolarWeather", true);
             notRainInDesert = builder.comment("Disable rain/snow in biomes with no natural precipitation (e.g., Deserts).")
                     .define("NoRainInDeserts", false);
