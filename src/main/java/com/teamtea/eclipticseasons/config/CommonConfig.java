@@ -418,9 +418,9 @@ public class CommonConfig {
             shouldInitSnowForExtremeColdBiomes = builder.comment("Force initialize snow states for extreme cold biomes when the mod or world is first loaded.")
                     .define("ShouldInitSnowDepthForExtremeColdBiomes", true);
             rainChanceMultiplier = builder.comment("Adjust the overall frequency of rain.")
-                    .defineInRange("RainChanceMultiplier", 120, 0, 1000);
+                    .defineInRange("RainChanceMultiplier", 100, 0, 1000);
             thunderChanceMultiplier = builder.comment("Adjust the overall frequency of thunder.")
-                    .defineInRange("ThunderChanceMultiplier", 80, 0, 1000);
+                    .defineInRange("ThunderChanceMultiplier", 100, 0, 1000);
             snowAccumulationSpeedMultiplier = builder
                     .comment("Adjusts the spread rate of atmospheric snow overlays across the ground.")
                     .defineInRange("SnowAccumulationSpeedMultiplier", 1.0, 0.0, 20.0);
