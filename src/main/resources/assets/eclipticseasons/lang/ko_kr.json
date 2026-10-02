@@ -427,7 +427,7 @@
   "eclipticseasons.configuration.FishingSeasons.tooltip": "낚시가 가장 잘 되는 계절 목록입니다.\n기본값: [SUMMER]",
   "eclipticseasons.configuration.LessFishInThunder.tooltip": "뇌우가 칠 때는 입질이 크게 줄어듭니다.",
   "eclipticseasons.configuration.SeasonCoreAffectsAnimals.tooltip": "온실이 없어도 계절 코어가 동물에게 번식 보너스를 주게 합니다.",
-  "eclipticseasons.configuration.UseSolarWeather.tooltip": "날씨는 절기에 따라 여러 변화를 보입니다. 바닐라와 달리, 이 모드에서는 날씨가 더 이상 정해진 순서로 전환되지 않습니다(예: 맑음 → 비 → 맑음). 대신 현재 날씨에서 다음 날씨가 여러 가능성으로 이어질 수 있으므로, 다음 날씨 구간은 현재와 같을 수도 있고 다를 수도 있습니다. 그 결과 비가 계속 내리는 봄이나 눈이 내리지 않는 건조한 겨울이 나타날 수 있습니다.",
+  "eclipticseasons.configuration.UseSolarWeather.tooltip": "날씨는 절기에 따라 여러 변화를 보입니다.",
   "eclipticseasons.configuration.NoRainInDeserts.tooltip": "자연 강수가 없는 생물 군계(사막 등)에서는 비와 눈이 내리지 않게 합니다.",
   "eclipticseasons.configuration.ShouldInitWeather.tooltip": "모드나 월드를 처음 불러올 때 날씨와 적설 상태를 강제로 초기화합니다.",
   "eclipticseasons.configuration.ShouldInitSnowDepthForExtremeColdBiomes.tooltip": "모드나 월드를 처음 불러올 때 극한 추위 생물 군계의 적설 상태를 강제로 초기화합니다.",
