@@ -105,7 +105,7 @@ public class ConfigRegistry {
                 "eclipticseasons.configuration.UseSolarWeather",
                 () -> CommonConfig.Weather.useSolarWeather.get(),
                 b -> CommonConfig.Weather.useSolarWeather.set(b),
-                () -> false).setSyncType(SyncType.COMMON), context.ownerOf(CommonConfig.COMMON_CONFIG));
+                () -> true).setSyncType(SyncType.COMMON), context.ownerOf(CommonConfig.COMMON_CONFIG));
 
         context.add(ConfigCategory.GENERAL, recommended, new CallbackBooleanEntry(
                 "eclipticseasons.configuration.DebugInfo",
