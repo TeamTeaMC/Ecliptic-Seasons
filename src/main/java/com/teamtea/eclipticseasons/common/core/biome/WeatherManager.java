@@ -489,8 +489,8 @@ public class WeatherManager {
                     0f, 1f);
 
             float clearScale = Mth.clamp(
-                    (1f - chance) / Math.max(0.01f, chance),
-                    0.2f, 5f);
+                    (float) Math.sqrt((1f - chance) / Math.max(0.01f, chance)),
+                    1f / 1.5f, 1.5f);
             float rainScale = 1f / clearScale;
 
             if (clearTime > 0) {
