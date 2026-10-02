@@ -1,2 +1,3 @@
-- Adjusted the description of the solar-term weather model
-- Added Korean translation, contributed by @Strawberry-Sushi in #197
+- Added an alternating weather model, enabled by default. Clear and rainy periods now alternate, as do thunder and
+  non-thunder periods, reducing prolonged rain and clear weather. Rain and thunder chances adjust both durations and
+  intervals. Disable `AlternatingWeatherModel` to restore the previous behavior.

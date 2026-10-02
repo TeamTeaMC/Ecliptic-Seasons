@@ -476,35 +476,88 @@ public class WeatherManager {
         boolean oldRaining = raining;
         boolean thundering = weatherData.isThundering();
 
-        if (clearTime > 0) {
-            clearTime--;
-        } else {
-            if (rainTime > 0) {
-                rainTime--;
-                if (thunderTime <= 0) {
-                    float weight = biomeRain.getThunderChance()
-                            * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
-                            // * size / 3000f
-                            ;
-                    if (level.getRandom().nextInt(1000) / 1000.f < weight) {
-                        thunderTime = biomeRain.getThunderDuration(random) / size;
-                        thundering = true;
-                    } else {
-                        thunderTime = biomeRain.getThunderDelay(random) / size;
-                        thundering = false;
-                    }
-                }
-            } else {
-                float downfall = EclipticUtil.getDownfallFloatConstant(solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
-                float weight = biomeRain.getRainChance()
-                        * Math.max(0.01f, downfall)
-                        * ((CommonConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
-                if (level.getRandom().nextInt(1000) / 1000.f < weight) {
-                    rainTime = biomeRain.getRainDuration(random) / size;
-                } else {
-                    clearTime = biomeRain.getRainDelay(random) / size;
-                }
+        boolean useAlternatingWeather = CommonConfig.Weather.alternatingWeatherModel.get();
 
+        if (useAlternatingWeather) {
+            float downfall = EclipticUtil.getDownfallFloatConstant(
+                    solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
+            float chance = Mth.clamp(
+                    biomeRain.getRainChance()
+                            * Math.max(0.01f, downfall)
+                            * (CommonConfig.Weather.rainChanceMultiplier.get() / 100f),
+                    0f, 1f);
+
+            float clearScale = Mth.clamp(
+                    (1f - chance) / Math.max(0.01f, chance),
+                    0.2f, 5f);
+            float rainScale = 1f / clearScale;
+
+            if (clearTime > 0) {
+                clearTime--;
+            } else if (rainTime > 0) {
+                rainTime--;
+
+                if (rainTime == 0) {
+                    clearTime = Math.max(1, (int) (
+                            biomeRain.getRainDelay(random) * clearScale / size));
+                }
+            } else if (chance > 0f) {
+                rainTime = Math.max(1, (int) (
+                        biomeRain.getRainDuration(random) * rainScale / size));
+            }
+
+            if (clearTime == 0 && rainTime > 0 && thunderTime <= 0) {
+                float thunderChance = Mth.clamp(
+                        biomeRain.getThunderChance()
+                                * (CommonConfig.Weather.thunderChanceMultiplier.get() / 100f),
+                        0f, 1f);
+
+                float thunderDelayScale = Mth.clamp(
+                        (1f - thunderChance) / Math.max(0.01f, thunderChance),
+                        0.2f, 5f);
+                float thunderDurationScale = 1f / thunderDelayScale;
+
+                if (thundering || thunderChance <= 0f) {
+                    thunderTime = Math.max(1, (int) (
+                            biomeRain.getThunderDelay(random) * thunderDelayScale / size));
+                    thundering = false;
+                } else {
+                    thunderTime = Math.max(1, (int) (
+                            biomeRain.getThunderDuration(random) * thunderDurationScale / size));
+                    thundering = true;
+                }
+            }
+        } else {
+            if (clearTime > 0) {
+                clearTime--;
+            } else {
+                if (rainTime > 0) {
+                    rainTime--;
+                    if (thunderTime <= 0) {
+                        float weight = biomeRain.getThunderChance()
+                                * ((CommonConfig.Weather.thunderChanceMultiplier.get() * 1f) / 100f)
+                                // * size / 3000f
+                                ;
+                        if (level.getRandom().nextInt(1000) / 1000.f < weight) {
+                            thunderTime = biomeRain.getThunderDuration(random) / size;
+                            thundering = true;
+                        } else {
+                            thunderTime = biomeRain.getThunderDelay(random) / size;
+                            thundering = false;
+                        }
+                    }
+                } else {
+                    float downfall = EclipticUtil.getDownfallFloatConstant(solarTerm, biomeWeather.biomeHolder.value(), !level.isClientSide());
+                    float weight = biomeRain.getRainChance()
+                            * Math.max(0.01f, downfall)
+                            * ((CommonConfig.Weather.rainChanceMultiplier.get() * 1f) / 100f);
+                    if (level.getRandom().nextInt(1000) / 1000.f < weight) {
+                        rainTime = biomeRain.getRainDuration(random) / size;
+                    } else {
+                        clearTime = biomeRain.getRainDelay(random) / size;
+                    }
+
+                }
             }
         }
 

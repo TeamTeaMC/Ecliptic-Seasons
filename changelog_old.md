@@ -1,5 +1,8 @@
 > 1.21.1 will now receive bug fixes and compatibility updates only.
 > New features will primarily target newer Minecraft versions.
+### 0.15.2
+
+- Added an alternating weather model, enabled by default. 
 
 ### 0.15.1
 
