@@ -1,3 +1,7 @@
+### 0.15.2
+
+- Added an alternating weather model, enabled by default. 
+
 ### 0.15.1
 
 - Moved crop humidity controls to the Survival simulation level to evaluate whether they are worth keeping.
