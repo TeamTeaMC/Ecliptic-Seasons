@@ -129,12 +129,12 @@
     ],
     "beginning_of_winter": [
       {
-        "summer_solstice": 1.0
+        "winter_solstice": 1.0
       }
     ],
     "light_snow": [
       {
-        "summer_solstice": 0.6
+        "winter_solstice": 0.6
       },
       {
         "greater_cold": 0.4
@@ -142,7 +142,7 @@
     ],
     "heavy_snow": [
       {
-        "summer_solstice": 0.4
+        "winter_solstice": 0.4
       },
       {
         "greater_cold": 0.6
