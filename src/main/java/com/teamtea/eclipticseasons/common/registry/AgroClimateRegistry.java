@@ -98,9 +98,9 @@ public class AgroClimateRegistry {
                 Either.<Season, SolarTerm>right(SolarTerm.COLD_DEW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_WINTER), 0.4f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.6f)),
                 Either.<Season, SolarTerm>right(SolarTerm.FIRST_FROST), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.8f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.2f)),
 
-                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 1f)),
-                Either.<Season, SolarTerm>right(SolarTerm.LIGHT_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.6f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.4f)),
-                Either.<Season, SolarTerm>right(SolarTerm.HEAVY_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.SUMMER_SOLSTICE), 0.4f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.6f)),
+                Either.<Season, SolarTerm>right(SolarTerm.BEGINNING_OF_WINTER), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 1f)),
+                Either.<Season, SolarTerm>right(SolarTerm.LIGHT_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.6f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.4f)),
+                Either.<Season, SolarTerm>right(SolarTerm.HEAVY_SNOW), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), 0.4f), Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.6f)),
                 Either.<Season, SolarTerm>right(SolarTerm.WINTER_SOLSTICE), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 1f)),
                 Either.<Season, SolarTerm>right(SolarTerm.LESSER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), .8f)),
                 Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), List.of(Pair.of(Either.<Season, SolarTerm>right(SolarTerm.GREATER_COLD), 0.55f))
