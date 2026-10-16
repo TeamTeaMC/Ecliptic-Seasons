@@ -160,14 +160,14 @@ public final class ESItemTagProvider extends ItemTagsProvider {
 
         public Appender add(Item... items) {
             for (Item item : items) {
-                add(BuiltInRegistries.ITEM.wrapAsHolder(item).getKey());
+                add(BuiltInRegistries.ITEM.wrapAsHolder(item).key());
             }
             return this;
         }
 
         public Appender add(Holder<Item>... items) {
             for (Holder<Item> item : items) {
-                add(item.getKey());
+                add(item.key());
             }
             return this;
         }

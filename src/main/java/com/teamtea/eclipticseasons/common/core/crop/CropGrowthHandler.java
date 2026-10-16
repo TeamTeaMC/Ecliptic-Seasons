@@ -192,7 +192,7 @@ public final class CropGrowthHandler {
         var blockRegistry = registryAccess.lookupOrThrow(Registries.BLOCK);
         for (var entry : ESSortInfo.sorted(cropGrowControlBuilders.get().listElements().toList())) {
             CropGrowControlBuilder builder = entry.value();
-            CropGrowControlBuilder.put(entry.getKey().identifier(), builder);
+            CropGrowControlBuilder.put(entry.key().identifier(), builder);
             Optional<HolderSet<Block>> blocks = builder.applyTarget().blocks();
             Optional<StatePropertiesPredicate> properties = builder.applyTarget().properties();
             if (blocks.isEmpty()) continue;
@@ -309,7 +309,7 @@ public final class CropGrowthHandler {
                         );
 
                         Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
-                        if (cropClimateTypeHolder.getKey() != null) {
+                        if (cropClimateTypeHolder.key() != null) {
                             c.compute(cropClimateTypeHolder, (Identifier, oldControl) -> {
                                 if (oldControl == null) return newControlCache;
                                 return oldControl.merge(newControlCache);
@@ -359,7 +359,7 @@ public final class CropGrowthHandler {
 
             for (int j = 0; j < builder.cropClimateType().size(); j++) {
                 Holder<AgroClimaticZone> cropClimateTypeHolder = builder.cropClimateType().get(j);
-                if (cropClimateTypeHolder.getKey() != null) {
+                if (cropClimateTypeHolder.key() != null) {
                     blockClimateMap.compute(cropClimateTypeHolder, (Identifier, oldControl) -> {
                         if (oldControl == null) return newControlCache;
                         return oldControl.merge(newControlCache);

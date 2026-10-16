@@ -2,22 +2,23 @@ package com.teamtea.eclipticseasons.data;
 
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
-import com.teamtea.eclipticseasons.common.registry.AgroClimateRegistry;
-import com.teamtea.eclipticseasons.common.registry.ESRegistries;
-import com.teamtea.eclipticseasons.common.registry.SpecialDaysRegistry;
+import com.teamtea.eclipticseasons.common.registry.*;
 import com.teamtea.eclipticseasons.data.api.MutablePackOutput;
 import com.teamtea.eclipticseasons.data.api.provider.base.ESSubPackDataMapProvider;
 import com.teamtea.eclipticseasons.data.extend.example.*;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.DatapackRegistryGeneratorExtra;
 import com.teamtea.eclipticseasons.data.extend.extra_snow.ExtraClientModelDefinitionProvider;
 import com.teamtea.eclipticseasons.data.extend.regional_snow_time.RegionalSnowTimeProvider;
+import com.teamtea.eclipticseasons.data.general.advancement.Advancements;
 import com.teamtea.eclipticseasons.data.general.datapack.DatapackRegistryGenerator;
 import com.teamtea.eclipticseasons.data.general.datapack.ESDataMapProvider;
 import com.teamtea.eclipticseasons.data.general.datapack.client.*;
 import com.teamtea.eclipticseasons.data.general.font.ESFontProvider;
 import com.teamtea.eclipticseasons.data.general.lang.Lang_EN;
 import com.teamtea.eclipticseasons.data.general.lang.Lang_ZH;
+import com.teamtea.eclipticseasons.data.general.loot.EclipticSeasonsLootTableProvider;
 import com.teamtea.eclipticseasons.data.general.model.ES2ModelProvider;
+import com.teamtea.eclipticseasons.data.general.recipe.ESRecipeProvider;
 import com.teamtea.eclipticseasons.data.general.sound.ESSoundDefinitionsProvider;
 import com.teamtea.eclipticseasons.data.general.tag.*;
 import net.minecraft.core.RegistryAccess;
@@ -27,9 +28,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.metadata.PackMetadataGenerator;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.data.event.GatherDataRegistryEntriesEvent;
 
 
 import java.nio.file.Path;
@@ -71,8 +74,8 @@ public class start {
             generator.addProvider(true, new ESItemTagProvider(packOutput, lookupProvider));
             generator.addProvider(true, new ESEntityTypeTagsProvider(packOutput, lookupProvider, MODID));
 
-            event.createReloadableRegistryObjects(DatapackRegistryGenerator.REGISTRY_SET_BUILDER);
-            event.createWorldRegistryObjects(DatapackRegistryGenerator.REGISTRY_SET_BUILDER_WORLD);
+            // event.createReloadableRegistryObjects(DatapackRegistryGenerator.REGISTRY_SET_BUILDER);
+            // event.createWorldRegistryObjects(DatapackRegistryGenerator.REGISTRY_SET_BUILDER_WORLD);
             // generator.addProvider(true, new DatapackRegistryGenerator(packOutput, lookupProvider));
 
             generator.addProvider(true, new ESDataMapProvider(packOutput, lookupProvider));
@@ -146,5 +149,30 @@ public class start {
         // event.createReloadableRegistryObjects(entriesBuilder,Set.of(EclipticSeasonsApi.MODID),"reload"+""+index);
         // event.createProvider((output) ->
         //         DatapackBuiltinEntriesProvider.forReloadableLayer(packOutput, "reload"+""+index, event.getWorldLookupProvider(), event.getReloadableLookupProvider(), entriesBuilder, Set.of(EclipticSeasonsApi.MODID)));
+    }
+
+
+
+    public static void gatherRegistryEntries(GatherDataRegistryEntriesEvent event) {
+        event.add(RecipeProvider.asBootstrap(ESRecipeProvider::new))
+                .add(Registries.ADVANCEMENT, new Advancements())
+                .add(Registries.LOOT_TABLE, new EclipticSeasonsLootTableProvider());
+
+        event.add(Registries.WORLD_CLOCK,(c)->{})
+                .add(Registries.TIMELINE, TimeLineRegistry::bootstrap)
+                .add(ESRegistries.WETTER, WetterStructureRegistry::bootstrap)
+                .add(ESRegistries.BIOME_CLIMATE_SETTING, BiomeClimateSettingsRegistry::bootstrap)
+                .add(ESRegistries.CROP, CropRegistry::bootstrap)
+                .add(ESRegistries.AGRO_CLIMATE, AgroClimateRegistry::bootstrap)
+                .add(ESRegistries.SEASON_QUEST, SeasonQuestRegistry::bootstrap)
+                .add(ESRegistries.HUMIDITY_CONTROL, HumidityControlRegistry::bootstrap)
+                .add(ESRegistries.SNOW_DEFINITIONS, SnowDefinitionsRegistry::bootstrap)
+                .add(ESRegistries.SEASON_PHASE, SeasonPhaseRegistry::bootstrap)
+                .add(ESRegistries.SEASON_CYCLE, SeasonCycleRegistry::bootstrap)
+                .add(Registries.JUKEBOX_SONG, SongRegistry::bootstrap)
+                .add(ESRegistries.EXTRA_INFO, ESSortInfoRegistry::bootstrap)
+                .add(ESRegistries.WEATHER_EFFECT, WeatherEffectRegistry::bootstrap)
+                .add(ESRegistries.BIOME_RAIN, BiomeRainRegistry::bootstrap)
+                .add(ESRegistries.SPECIAL_DAYS, SpecialDaysRegistry::bootstrap);
     }
 }

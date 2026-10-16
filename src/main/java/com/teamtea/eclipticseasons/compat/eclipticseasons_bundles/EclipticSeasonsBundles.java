@@ -23,7 +23,7 @@ public class EclipticSeasonsBundles {
         ModContainer modContainer = modContainerById.orElse(null);
         if (modContainer instanceof ModContainer
                 && General.COMMON_CONFIG != null) {
-            modContainer.registerConfig(ModConfig.Type.COMMON, General.COMMON_CONFIG);
+            modContainer.registerConfig(ModConfig.Type.LOCAL, General.COMMON_CONFIG);
             ESConfigSync.specShouldSync.add(General.COMMON_CONFIG);
             if (FMLLoader.getCurrentOrNull().getDist() == Dist.CLIENT)
                 modContainer.registerExtensionPoint(IConfigScreenFactory.class, BundlesScreenDefinition.INSTANCE::create);

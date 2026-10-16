@@ -778,8 +778,8 @@ public class WeatherManager {
         for (BiomeWeather biomeWeather : levelBiomeWeather) {
             int index = biomeWeather.id;
             snows[index] = biomeWeather.getSnowDepth();
-            special[index] = biomeWeather.effect == null || biomeWeather.effect.getKey() == null ? -1 :
-                    weatherEffects.getId(biomeWeather.effect.getKey());
+            special[index] = biomeWeather.effect == null || biomeWeather.effect.key() == null ? -1 :
+                    weatherEffects.getId(biomeWeather.effect.key());
             weather[index] =
                     BiomeRainDispatcher.indexOf(true, biomeWeather.getBiomeRain());
         }
@@ -877,7 +877,7 @@ public class WeatherManager {
             tag.putLong("lastRainTime", lastRainTime);
             tag.putFloat("snowDepth", snowDepth);
             if (effect != null)
-                tag.putString("specialEffect", effect.getKey().identifier().toString());
+                tag.putString("specialEffect", effect.key().identifier().toString());
             tag.putInt("biomeRain", BiomeRainDispatcher.indexOf(true, biomeRain));
             return tag;
         }

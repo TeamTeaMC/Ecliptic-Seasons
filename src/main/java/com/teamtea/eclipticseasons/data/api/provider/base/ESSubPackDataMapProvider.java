@@ -130,7 +130,7 @@ public class ESSubPackDataMapProvider<T> extends ESClientDataMapProvider<T> {
                 CompletableFuture.supplyAsync(() -> modProvider, Util.backgroundExecutor());
 
         List<RegistryDataLoader.RegistryData<?>> registryDataList = ConcatenatedListView.of(
-                DataPackRegistriesHooks.getDataPackRegistriesWithDimensions().toList(),
+                DataPackRegistriesHooks.getWorldRegistries(),
                 RegistryDataLoader.RELOADABLE_REGISTRIES
         );
 

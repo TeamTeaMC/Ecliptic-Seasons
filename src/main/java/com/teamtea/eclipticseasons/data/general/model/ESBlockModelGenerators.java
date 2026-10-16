@@ -135,7 +135,7 @@ public class ESBlockModelGenerators {
                 .with(PropertyDispatch.initial(SeasonSensorBlock.SEASON, SeasonSensorBlock.ON_SIGNAL)
                         .generate((season, signal) ->
                                 {
-                                    Identifier rl = EclipticSeasons.rl("block/" + block.builtInRegistryHolder().getKey().identifier().getPath() + "_" + season.getName())
+                                    Identifier rl = EclipticSeasons.rl("block/" + block.builtInRegistryHolder().key().identifier().getPath() + "_" + season.getName())
                                             .withSuffix(signal ? "" : "_full");
                                     if (!signal) {
                                         TextureMapping textureMapping = new TextureMapping().put(TS_1, new Material(EclipticSeasons.rl("block/season_sensor_light_full")));

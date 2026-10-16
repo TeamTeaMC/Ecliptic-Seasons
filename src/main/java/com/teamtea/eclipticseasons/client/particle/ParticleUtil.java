@@ -369,7 +369,7 @@ public class ParticleUtil {
                 ArrayList<Integer> blist = new ArrayList<>();
                 for (int i = 0; i < texture.contents().width(); i++) {
                     for (int j = 0; j < texture.contents().height(); j++) {
-                        int color = 0xff000000 | texture.getPixelRGBA(0, i, j);
+                        int color = 0xff000000 | texture.getPixelARGB(0, i, j);
                         int b = color & 0xff;
                         int g = (color >> 8) & 0xff;
                         int r = (color >> 16) & 0xff;

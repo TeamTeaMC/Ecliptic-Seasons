@@ -74,7 +74,7 @@ public abstract class AbstractModelDefinitionProvider extends ESClientDataMapPro
     }
 
     public ModelDefinitionBuilder addSnowy(Block block) {
-        return addModelDefinition(block.builtInRegistryHolder().getKey().identifier().withPrefix("snowy/"));
+        return addModelDefinition(block.builtInRegistryHolder().key().identifier().withPrefix("snowy/"));
     }
 
     public class ModelDefinitionBuilder {

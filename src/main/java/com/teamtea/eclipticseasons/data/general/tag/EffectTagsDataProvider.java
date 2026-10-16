@@ -22,6 +22,6 @@ public class EffectTagsDataProvider extends TagsProvider<MobEffect> {
 
     @Override
     protected void addTags(HolderLookup.@NonNull Provider provider) {
-        tag(ESMobEffectTags.HEATSTROKE_RESISTANT).add(MobEffects.FIRE_RESISTANCE.getKey());
+        tag(ESMobEffectTags.HEATSTROKE_RESISTANT).add(MobEffects.FIRE_RESISTANCE.key());
     }
 }

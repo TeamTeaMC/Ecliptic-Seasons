@@ -241,7 +241,7 @@ public class SeasonalBlockColorCache {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                int argb = sprite.getPixelRGBA(0, x, y);
+                int argb = sprite.getPixelARGB(0, x, y);
 
                 int alpha = argb >>> 24 & 0xFF;
 
@@ -254,9 +254,9 @@ public class SeasonalBlockColorCache {
                     continue;
                 }
 
-                int pixelRed = argb >>> 16 & 0xFF;
+                int pixelRed = argb & 0xFF;
                 int pixelGreen = argb >>> 8 & 0xFF;
-                int pixelBlue = argb & 0xFF;
+                int pixelBlue = argb >>> 16 & 0xFF;
 
                 red += srgbToLinear(pixelRed / 255.0D);
                 green += srgbToLinear(pixelGreen / 255.0D);

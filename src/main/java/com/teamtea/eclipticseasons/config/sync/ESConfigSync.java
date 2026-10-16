@@ -37,7 +37,7 @@ public class ESConfigSync {
 
     public List<ESConfigFilePayload> syncConfigs(boolean isLocal) {
         final Map<String, byte[]> configData = new ConcurrentHashMap<>();
-        for (ModConfig modConfig : ModConfigs.getConfigSet(ModConfig.Type.COMMON)) {
+        for (ModConfig modConfig : ModConfigs.getConfigSet(ModConfig.Type.LOCAL)) {
             for (IConfigSpec iConfigSpec : specShouldSync) {
                 if (iConfigSpec == modConfig.getSpec()) {
                     try {

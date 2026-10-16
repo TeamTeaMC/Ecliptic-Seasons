@@ -24,7 +24,7 @@ public class ModContents {
     public static void registerBuiltinResourcePacks(AddPackFindersEvent event) {
         Optional<IModFile> modContainer = Optional.ofNullable(Platform.getModFile(EclipticSeasonsBundles.MODID));
         if (modContainer.orElse(null) instanceof IModFile modFile) {
-            CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.COMMON, EclipticSeasonsBundles.MODID)))
+            CommentedFileConfig oldConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(EclipticSeasons.defaultConfigName(ModConfig.Type.LOCAL, EclipticSeasonsBundles.MODID)))
                     .preserveInsertionOrder().build();
             oldConfig.load();
 

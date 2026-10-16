@@ -175,8 +175,8 @@ public class DebugInfoRenderer {
                     if (weatherTarget != null) {
                         // infoLines.addKV("Biome Rain", weatherTarget.getBiomeRain().name(), "§f");
                         infoLines.add("Biome Rain: §2" + weatherTarget.getBiomeRain().name() + " §3(" + (weatherTarget.getBiomeRain().ordinal() + 1) + ")§r");
-                        if (weatherTarget.effect != null && weatherTarget.effect.getKey() != null)
-                            infoLines.add("Weather Effect: §2" + weatherTarget.effect.getKey().identifier());
+                        if (weatherTarget.effect != null && weatherTarget.effect.keyOrNull() != null)
+                            infoLines.add("Weather Effect: §2" + weatherTarget.effect.key().identifier());
                         if (owner != null && !owner.equals(e_cachedBiome) && biomes.isPresent()) {
                             infoLines.addKV("Owner", getBiomeName(owner, biomes.get()), "§e");
                         }

@@ -897,7 +897,7 @@ public class MapChecker {
             flag = FLAG_NONE;
         } else if (state.is(EclipticBlockTags.SNOW_OVERLAY_CANNOT_SURVIVE_ON)) {
             flag = FLAG_NONE;
-        } else if (state.getBlock().builtInRegistryHolder().getKey().identifier().getNamespace().equals("snowrealmagic"))
+        } else if (state.getBlock().builtInRegistryHolder().key().identifier().getNamespace().equals("snowrealmagic"))
             return MapChecker.FLAG_NONE;
         else if (onBlock instanceof LeavesBlock) {
             flag = FLAG_LEAVES;

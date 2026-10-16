@@ -255,7 +255,7 @@ public class CompatCropHookInternal {
 
                 if (!CompatModule.CommonConfig.sereneSeasonBasedHumidity.get()) continue;
 
-                Identifier key = t.getKey().identifier();
+                Identifier key = t.key().identifier();
                 if (key != null)
                     if (!blackMods.contains(key.getNamespace())) {
                         CropHumidityType humid =

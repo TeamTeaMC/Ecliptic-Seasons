@@ -216,7 +216,7 @@ public class CommandHandler {
                                         if (specialDays.isEmpty())
                                             commandContext.getSource().sendSuccess(Component::empty, true);
                                         else {
-                                            var first = specialDays.getFirst().getKey();
+                                            var first = specialDays.getFirst().keyOrNull();
                                             if (first != null)
                                                 commandContext.getSource().sendSuccess(() -> Component.literal(first.identifier().toString()), true);
                                         }

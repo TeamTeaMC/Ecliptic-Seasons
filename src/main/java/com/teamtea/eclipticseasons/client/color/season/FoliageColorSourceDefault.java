@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class FoliageColorSourceDefault {
     public static String createSingle() {
-        StringBuilder s = new StringBuilder(Blocks.SPRUCE_LEAVES.builtInRegistryHolder().getKey().identifier().toString());
+        StringBuilder s = new StringBuilder(Blocks.SPRUCE_LEAVES.builtInRegistryHolder().key().identifier().toString());
         s.append("@");
         for (SpruceLeavesColor spruceLeavesColor : SpruceLeavesColor.collectValues()) {
             s.append(String.format("#%06X", (0xFFFFFF & spruceLeavesColor.getColor())));

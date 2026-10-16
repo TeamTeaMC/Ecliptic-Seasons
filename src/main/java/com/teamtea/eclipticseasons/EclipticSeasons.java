@@ -47,6 +47,9 @@ public class EclipticSeasons {
         modEventBus.addListener(this::FMLCommonSetup);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::gatherData2);
+        if(Boolean.getBoolean("eclipticseasons.runs.runServerData"))
+            modEventBus.addListener(start::gatherRegistryEntries);
+
         modEventBus.addListener(CompatModule::onInterModEnqueue);
 
         ResourceConditionRegistry.CONDITION_DEFERRED_REGISTER.register(modEventBus);
@@ -66,7 +69,7 @@ public class EclipticSeasons {
 
         // modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG2,EclipticSeasonsApi.MODID+"/test.toml");
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, CommonConfig.COMMON_CONFIG);
+        modContainer.registerConfig(ModConfig.Type.LOCAL, CommonConfig.COMMON_CONFIG);
 
         modContainer.registerConfig(ModConfig.Type.CLIENT, ClientConfig.CLIENT_CONFIG);
 

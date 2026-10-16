@@ -95,7 +95,7 @@ public class MapExporter {
             // List<String> sss= new ArrayList<>();
             // sss.add("s");
             graphics2D.drawString(
-                    holderColorEntry.getKey() == null ? "not load" : holderColorEntry.getKey().getRegisteredName() + "," + Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().getKey().identifier())).getString(), 5,
+                    holderColorEntry.getKey() == null ? "not load" : holderColorEntry.getKey().getRegisteredName() + "," + Component.translatable(Util.makeDescriptionId("biome", holderColorEntry.getKey().key().identifier())).getString(), 5,
                     20 * (++i));
         }
         // graphics2D.fillArc(ChunkInfoMap.getChunkValue(source.getPlayer().getBlockX()) - 5,
