@@ -4,13 +4,13 @@
     "solar_terms": {
       "beginning_of_spring": {
         "rain": {
-          "min_inclusive": 12000,
-          "max_inclusive": 20000,
+          "min_inclusive": 5400,
+          "max_inclusive": 9000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 40000,
-          "max_inclusive": 72000,
+          "min_inclusive": 24000,
+          "max_inclusive": 36000,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.3,
@@ -19,13 +19,13 @@
       },
       "rain_water": {
         "rain": {
-          "min_inclusive": 16000,
-          "max_inclusive": 24000,
+          "min_inclusive": 3600,
+          "max_inclusive": 7200,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 32000,
-          "max_inclusive": 50000,
+          "min_inclusive": 30000,
+          "max_inclusive": 48000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -40,13 +40,13 @@
       },
       "insects_awakening": {
         "rain": {
-          "min_inclusive": 12000,
-          "max_inclusive": 18000,
+          "min_inclusive": 4342,
+          "max_inclusive": 7598,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 24000,
-          "max_inclusive": 48000,
+          "min_inclusive": 29186,
+          "max_inclusive": 46433,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -60,13 +60,13 @@
       },
       "spring_equinox": {
         "rain": {
-          "min_inclusive": 12000,
-          "max_inclusive": 24000,
+          "min_inclusive": 4800,
+          "max_inclusive": 8400,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 32000,
-          "max_inclusive": 64000,
+          "min_inclusive": 24000,
+          "max_inclusive": 42000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -80,13 +80,13 @@
       },
       "fresh_green": {
         "rain": {
-          "min_inclusive": 18000,
-          "max_inclusive": 36000,
+          "min_inclusive": 4116,
+          "max_inclusive": 7409,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 6000,
-          "max_inclusive": 18000,
+          "min_inclusive": 34986,
+          "max_inclusive": 55977,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -100,13 +100,13 @@
       },
       "grain_rain": {
         "rain": {
-          "min_inclusive": 24000,
-          "max_inclusive": 52000,
+          "min_inclusive": 4800,
+          "max_inclusive": 8000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 6000,
-          "max_inclusive": 16000,
+          "min_inclusive": 32400,
+          "max_inclusive": 54000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -120,13 +120,13 @@
       },
       "beginning_of_summer": {
         "rain": {
-          "min_inclusive": 22000,
-          "max_inclusive": 44000,
+          "min_inclusive": 4000,
+          "max_inclusive": 7200,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 10000,
-          "max_inclusive": 24000,
+          "min_inclusive": 36000,
+          "max_inclusive": 63000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -141,13 +141,13 @@
       },
       "lesser_fullness": {
         "rain": {
-          "min_inclusive": 20000,
-          "max_inclusive": 42000,
+          "min_inclusive": 4000,
+          "max_inclusive": 6400,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 12000,
-          "max_inclusive": 28000,
+          "min_inclusive": 39600,
+          "max_inclusive": 64800,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -161,13 +161,13 @@
       },
       "grain_in_ear": {
         "rain": {
-          "min_inclusive": 18000,
-          "max_inclusive": 36000,
+          "min_inclusive": 3293,
+          "max_inclusive": 5762,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 12000,
-          "max_inclusive": 30000,
+          "min_inclusive": 41983,
+          "max_inclusive": 66473,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -181,13 +181,13 @@
       },
       "summer_solstice": {
         "rain": {
-          "min_inclusive": 12000,
-          "max_inclusive": 28000,
+          "min_inclusive": 2400,
+          "max_inclusive": 4800,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 18000,
-          "max_inclusive": 42000,
+          "min_inclusive": 45000,
+          "max_inclusive": 72000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -201,13 +201,13 @@
       },
       "lesser_heat": {
         "rain": {
-          "min_inclusive": 16000,
-          "max_inclusive": 32000,
+          "min_inclusive": 2642,
+          "max_inclusive": 5283,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 32000,
-          "max_inclusive": 64000,
+          "min_inclusive": 45789,
+          "max_inclusive": 73590,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -221,13 +221,13 @@
       },
       "greater_heat": {
         "rain": {
-          "min_inclusive": 12000,
-          "max_inclusive": 24000,
+          "min_inclusive": 3600,
+          "max_inclusive": 6000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 48000,
-          "max_inclusive": 96000,
+          "min_inclusive": 38400,
+          "max_inclusive": 60000,
           "type": "minecraft:uniform"
         },
         "thunder": {
@@ -241,13 +241,13 @@
       },
       "beginning_of_autumn": {
         "rain": {
-          "min_inclusive": 8000,
-          "max_inclusive": 16000,
+          "min_inclusive": 4231,
+          "max_inclusive": 7051,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 64000,
-          "max_inclusive": 128000,
+          "min_inclusive": 35740,
+          "max_inclusive": 56164,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.42,
@@ -256,13 +256,13 @@
       },
       "end_of_heat": {
         "rain": {
-          "min_inclusive": 6000,
-          "max_inclusive": 12000,
+          "min_inclusive": 2939,
+          "max_inclusive": 7348,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 72000,
-          "max_inclusive": 144000,
+          "min_inclusive": 39192,
+          "max_inclusive": 58788,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.4,
@@ -270,13 +270,13 @@
       },
       "white_dew": {
         "rain": {
-          "min_inclusive": 4000,
-          "max_inclusive": 8000,
+          "min_inclusive": 3271,
+          "max_inclusive": 6541,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 96000,
-          "max_inclusive": 150000,
+          "min_inclusive": 39625,
+          "max_inclusive": 57236,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.35,
@@ -284,13 +284,13 @@
       },
       "autumnal_equinox": {
         "rain": {
-          "min_inclusive": 4000,
-          "max_inclusive": 8000,
+          "min_inclusive": 3499,
+          "max_inclusive": 6997,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 96000,
-          "max_inclusive": 150000,
+          "min_inclusive": 37044,
+          "max_inclusive": 57624,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.32,
@@ -298,13 +298,13 @@
       },
       "cold_dew": {
         "rain": {
-          "min_inclusive": 2000,
-          "max_inclusive": 6000,
+          "min_inclusive": 3600,
+          "max_inclusive": 7200,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 100000,
-          "max_inclusive": 140000,
+          "min_inclusive": 40000,
+          "max_inclusive": 56000,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.3,
@@ -312,13 +312,13 @@
       },
       "first_frost": {
         "rain": {
-          "min_inclusive": 2000,
-          "max_inclusive": 4000,
+          "min_inclusive": 3600,
+          "max_inclusive": 7200,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 120000,
-          "max_inclusive": 150000,
+          "min_inclusive": 40000,
+          "max_inclusive": 60000,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.25,
@@ -326,13 +326,13 @@
       },
       "beginning_of_winter": {
         "rain": {
-          "min_inclusive": 2000,
-          "max_inclusive": 4000,
+          "min_inclusive": 7200,
+          "max_inclusive": 10800,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 90000,
-          "max_inclusive": 120000,
+          "min_inclusive": 28000,
+          "max_inclusive": 40000,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.3,
@@ -340,13 +340,13 @@
       },
       "light_snow": {
         "rain": {
-          "min_inclusive": 8000,
-          "max_inclusive": 16000,
+          "min_inclusive": 7348,
+          "max_inclusive": 11758,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 72000,
-          "max_inclusive": 90000,
+          "min_inclusive": 27434,
+          "max_inclusive": 41151,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.4,
@@ -355,13 +355,13 @@
       },
       "heavy_snow": {
         "rain": {
-          "min_inclusive": 16000,
-          "max_inclusive": 32000,
+          "min_inclusive": 7200,
+          "max_inclusive": 12000,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 48000,
-          "max_inclusive": 80000,
+          "min_inclusive": 26400,
+          "max_inclusive": 42000,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.5,
@@ -370,26 +370,26 @@
       },
       "winter_solstice": {
         "rain": {
-          "min_inclusive": 8000,
-          "max_inclusive": 16000,
+          "min_inclusive": 7960,
+          "max_inclusive": 13266,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 72000,
-          "max_inclusive": 96000,
+          "min_inclusive": 26051,
+          "max_inclusive": 41247,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.45
       },
       "lesser_cold": {
         "rain": {
-          "min_inclusive": 4000,
-          "max_inclusive": 8000,
+          "min_inclusive": 7348,
+          "max_inclusive": 13227,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 72000,
-          "max_inclusive": 96000,
+          "min_inclusive": 25475,
+          "max_inclusive": 39192,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.4,
@@ -397,13 +397,13 @@
       },
       "greater_cold": {
         "rain": {
-          "min_inclusive": 2000,
-          "max_inclusive": 5000,
+          "min_inclusive": 7200,
+          "max_inclusive": 12600,
           "type": "minecraft:uniform"
         },
         "rain_delay": {
-          "min_inclusive": 96000,
-          "max_inclusive": 144000,
+          "min_inclusive": 25600,
+          "max_inclusive": 40000,
           "type": "minecraft:uniform"
         },
         "rain_chance": 0.2,

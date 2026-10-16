@@ -1,1 +1,1 @@
-- Fixed a bug where crops in cold regions would incorrectly grow at the rate of temperate-region summer crops during the first half of winter.
+- Rebalanced precipitation durations and clear-weather intervals throughout the year, with shorter rain periods and more time for clear skies.
