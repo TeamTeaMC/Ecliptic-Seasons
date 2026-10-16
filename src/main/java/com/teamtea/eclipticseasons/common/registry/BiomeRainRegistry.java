@@ -50,30 +50,30 @@ public class BiomeRainRegistry {
         // Spring
         map.put(SolarTerm.BEGINNING_OF_SPRING, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.3F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(12000, 20000)))
-                        .rainDelay(Optional.of(UniformInt.of(40000, 72000)))
+                        .rain(Optional.of(UniformInt.of(5400, 9000)))
+                        .rainDelay(Optional.of(UniformInt.of(24000, 36000)))
                         .snowMeltSpeed(0.75f)
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.RAIN_WATER, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.32F).weight(10)
-                        .rain(Optional.of(UniformInt.of(16000, 24000)))
-                        .rainDelay(Optional.of(UniformInt.of(32000, 50000)))
+                        .rain(Optional.of(UniformInt.of(3600, 7200)))
+                        .rainDelay(Optional.of(UniformInt.of(30000, 48000)))
                         .thunder(Optional.of(UniformInt.of(6000, 12000)))
                         .snowMeltSpeed(0.85f)
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.INSECTS_AWAKENING, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.55F).thunderChance(0.6F).weight(10)
-                        .rain(Optional.of(UniformInt.of(12000, 18000)))
-                        .rainDelay(Optional.of(UniformInt.of(24000, 48000)))
+                        .rain(Optional.of(UniformInt.of(4342, 7598)))
+                        .rainDelay(Optional.of(UniformInt.of(29186, 46433)))
                         .thunder(Optional.of(UniformInt.of(12000, 20000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.SPRING_EQUINOX, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.4F).weight(10)
-                        .rain(Optional.of(UniformInt.of(12000, 24000)))
-                        .rainDelay(Optional.of(UniformInt.of(32000, 64000)))
+                        .rain(Optional.of(UniformInt.of(4800, 8400)))
+                        .rainDelay(Optional.of(UniformInt.of(24000, 42000)))
                         .thunder(Optional.of(UniformInt.of(6000, 12000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
@@ -83,8 +83,8 @@ public class BiomeRainRegistry {
                         .rainChance(0.68F)
                         .thunderChance(0.15F)
                         .weight(10)
-                        .rain(Optional.of(UniformInt.of(18000, 36000)))
-                        .rainDelay(Optional.of(UniformInt.of(6000, 18000)))
+                        .rain(Optional.of(UniformInt.of(4116, 7409)))
+                        .rainDelay(Optional.of(UniformInt.of(34986, 55977)))
                         .thunder(Optional.of(UniformInt.of(4000, 8000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow()))
                         .build()
@@ -95,8 +95,8 @@ public class BiomeRainRegistry {
                         .rainChance(0.78F)
                         .thunderChance(0.05F)
                         .weight(10)
-                        .rain(Optional.of(UniformInt.of(24000, 52000)))
-                        .rainDelay(Optional.of(UniformInt.of(6000, 16000)))
+                        .rain(Optional.of(UniformInt.of(4800, 8000)))
+                        .rainDelay(Optional.of(UniformInt.of(32400, 54000)))
                         .thunder(Optional.of(UniformInt.of(4000, 8000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow()))
                         .build()
@@ -108,8 +108,8 @@ public class BiomeRainRegistry {
                         .rainChance(0.72F)
                         .thunderChance(0.15F)
                         .weight(10)
-                        .rain(Optional.of(UniformInt.of(22000, 44000)))
-                        .rainDelay(Optional.of(UniformInt.of(10000, 24000)))
+                        .rain(Optional.of(UniformInt.of(4000, 7200)))
+                        .rainDelay(Optional.of(UniformInt.of(36000, 63000)))
                         .snowMeltSpeed(1.2F)
                         .thunder(Optional.of(UniformInt.of(4000, 10000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow()))
@@ -121,8 +121,8 @@ public class BiomeRainRegistry {
                         .rainChance(0.72F)
                         .thunderChance(0.35F)
                         .weight(10)
-                        .rain(Optional.of(UniformInt.of(20000, 42000)))
-                        .rainDelay(Optional.of(UniformInt.of(12000, 28000)))
+                        .rain(Optional.of(UniformInt.of(4000, 6400)))
+                        .rainDelay(Optional.of(UniformInt.of(39600, 64800)))
                         .snowMeltSpeed(1.2F)
                         .thunder(Optional.of(UniformInt.of(8000, 18000)))
                         .build()
@@ -133,8 +133,8 @@ public class BiomeRainRegistry {
                         .rainChance(0.68F)
                         .thunderChance(0.55F)
                         .weight(10)
-                        .rain(Optional.of(UniformInt.of(18000, 36000)))
-                        .rainDelay(Optional.of(UniformInt.of(12000, 30000)))
+                        .rain(Optional.of(UniformInt.of(3293, 5762)))
+                        .rainDelay(Optional.of(UniformInt.of(41983, 66473)))
                         .snowMeltSpeed(1.2F)
                         .thunder(Optional.of(UniformInt.of(12000, 24000)))
                         .build()
@@ -145,23 +145,23 @@ public class BiomeRainRegistry {
                         .rainChance(0.70F)
                         .thunderChance(0.85F)
                         .weight(10)
-                        .rain(Optional.of(UniformInt.of(12000, 28000)))
-                        .rainDelay(Optional.of(UniformInt.of(18000, 42000)))
+                        .rain(Optional.of(UniformInt.of(2400, 4800)))
+                        .rainDelay(Optional.of(UniformInt.of(45000, 72000)))
                         .snowMeltSpeed(1.2F)
                         .thunder(Optional.of(UniformInt.of(16000, 32000)))
                         .build()
         ));
         map.put(SolarTerm.LESSER_HEAT, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.65F).thunderChance(0.8F).weight(10)
-                        .rain(Optional.of(UniformInt.of(16000, 32000)))
-                        .rainDelay(Optional.of(UniformInt.of(32000, 64000)))
+                        .rain(Optional.of(UniformInt.of(2642, 5283)))
+                        .rainDelay(Optional.of(UniformInt.of(45789, 73590)))
                         .snowMeltSpeed(1.25f)
                         .thunder(Optional.of(UniformInt.of(16000, 32000))).build()
         ));
         map.put(SolarTerm.GREATER_HEAT, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.2F).weight(10)
-                        .rain(Optional.of(UniformInt.of(12000, 24000)))
-                        .rainDelay(Optional.of(UniformInt.of(48000, 96000)))
+                        .rain(Optional.of(UniformInt.of(3600, 6000)))
+                        .rainDelay(Optional.of(UniformInt.of(38400, 60000)))
                         .snowMeltSpeed(1.35f)
                         .thunder(Optional.of(UniformInt.of(8000, 16000))).build()
         ));
@@ -169,77 +169,77 @@ public class BiomeRainRegistry {
         // Autumn
         map.put(SolarTerm.BEGINNING_OF_AUTUMN, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.42F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(8000, 16000)))
-                        .rainDelay(Optional.of(UniformInt.of(64000, 128000)))
+                        .rain(Optional.of(UniformInt.of(4231, 7051)))
+                        .rainDelay(Optional.of(UniformInt.of(35740, 56164)))
                         .snowMeltSpeed(1.05f)
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.END_OF_HEAT, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.4F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(6000, 12000)))
-                        .rainDelay(Optional.of(UniformInt.of(72000, 144000)))
+                        .rain(Optional.of(UniformInt.of(2939, 7348)))
+                        .rainDelay(Optional.of(UniformInt.of(39192, 58788)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.WHITE_DEW, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.35F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(4000, 8000)))
-                        .rainDelay(Optional.of(UniformInt.of(96000, 150000)))
+                        .rain(Optional.of(UniformInt.of(3271, 6541)))
+                        .rainDelay(Optional.of(UniformInt.of(39625, 57236)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.AUTUMNAL_EQUINOX, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.32F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(4000, 8000)))
-                        .rainDelay(Optional.of(UniformInt.of(96000, 150000)))
+                        .rain(Optional.of(UniformInt.of(3499, 6997)))
+                        .rainDelay(Optional.of(UniformInt.of(37044, 57624)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.COLD_DEW, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.3F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(2000, 6000)))
-                        .rainDelay(Optional.of(UniformInt.of(100000, 140000)))
+                        .rain(Optional.of(UniformInt.of(3600, 7200)))
+                        .rainDelay(Optional.of(UniformInt.of(40000, 56000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.FIRST_FROST, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.25F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(2000, 4000)))
-                        .rainDelay(Optional.of(UniformInt.of(120000, 150000)))
+                        .rain(Optional.of(UniformInt.of(3600, 7200)))
+                        .rainDelay(Optional.of(UniformInt.of(40000, 60000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
 
         // winter
         map.put(SolarTerm.BEGINNING_OF_WINTER, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.3F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(2000, 4000)))
-                        .rainDelay(Optional.of(UniformInt.of(90000, 120000)))
+                        .rain(Optional.of(UniformInt.of(7200, 10800)))
+                        .rainDelay(Optional.of(UniformInt.of(28000, 40000)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.LIGHT_SNOW, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.4F).thunderChance(0.2F).weight(10)
-                        .rain(Optional.of(UniformInt.of(8000, 16000)))
-                        .rainDelay(Optional.of(UniformInt.of(72000, 90000)))
+                        .rain(Optional.of(UniformInt.of(7348, 11758)))
+                        .rainDelay(Optional.of(UniformInt.of(27434, 41151)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.HEAVY_SNOW, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.5F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(16000, 32000)))
-                        .rainDelay(Optional.of(UniformInt.of(48000, 80000)))
+                        .rain(Optional.of(UniformInt.of(7200, 12000)))
+                        .rainDelay(Optional.of(UniformInt.of(26400, 42000)))
                         .snowAccumulationSpeed(0.85f)
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.WINTER_SOLSTICE, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.45F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(8000, 16000)))
-                        .rainDelay(Optional.of(UniformInt.of(72000, 96000))).build()
+                        .rain(Optional.of(UniformInt.of(7960, 13266)))
+                        .rainDelay(Optional.of(UniformInt.of(26051, 41247))).build()
         ));
         map.put(SolarTerm.LESSER_COLD, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.4F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(4000, 8000)))
-                        .rainDelay(Optional.of(UniformInt.of(72000, 96000)))
+                        .rain(Optional.of(UniformInt.of(7348, 13227)))
+                        .rainDelay(Optional.of(UniformInt.of(25475, 39192)))
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.MODERATE_RAIN_SNOW).orElseThrow())).build()
         ));
         map.put(SolarTerm.GREATER_COLD, List.of(
                 CustomRainBuilder.Weather.builder().rainChance(0.2F).thunderChance(0.0F).weight(10)
-                        .rain(Optional.of(UniformInt.of(2000, 5000)))
-                        .rainDelay(Optional.of(UniformInt.of(96000, 144000)))
+                        .rain(Optional.of(UniformInt.of(7200, 12600)))
+                        .rainDelay(Optional.of(UniformInt.of(25600, 40000)))
                         .snowAccumulationSpeed(0.85f)
                         .specialEffect(Optional.of(holderGetter2.get(WeatherEffectRegistry.LIGHT_RAIN_SNOW).orElseThrow())).build()
         ));
