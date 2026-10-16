@@ -283,7 +283,7 @@ dependencies {
 //    implementation "net.neoforged:neoforge:${neo_version}"
 
 
-    implementation "maven.modrinth:jei:YTC3a33y"
+    compileOnly "maven.modrinth:jei:YTC3a33y"
     implementation "maven.modrinth:jade:26.3.1+neoforge"
     compileOnly("curse.maven:the-one-probe-245211:6106998")
 
@@ -309,7 +309,7 @@ dependencies {
     }
 
     println "---- [DEBUG] onlyMain----"
-    onlyMainRuntimeOnly "maven.modrinth:journeymap:26.3-6.0.9+neoforge"
+    onlyMainRuntimeOnly "maven.modrinth:journeymap:26.3-6.0.10+neoforge"
 //    onlyMainRuntimeOnly("curse.maven:spark-361579:7815877")
     println("----Scan onlyMainRuntimeOnly libs begin----")
     fileTree(dir: 'libs', include: ['*.jar']).each { File file ->

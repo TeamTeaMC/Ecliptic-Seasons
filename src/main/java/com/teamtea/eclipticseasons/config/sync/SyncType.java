@@ -48,6 +48,8 @@ public enum SyncType {
     }
 
     public String extension() {
+        if (this==COMMON)
+            return ModConfig.Type.LOCAL.extension();
         return StringUtils.toLowerCase(name());
     }
 
@@ -67,6 +69,8 @@ public enum SyncType {
     }
 
     public static SyncType of(ModConfig.Type type) {
+        if (type == ModConfig.Type.LOCAL)
+            return COMMON;
         return valueOf(type.toString());
     }
 }
