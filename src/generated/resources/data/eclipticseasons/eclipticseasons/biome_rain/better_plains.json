@@ -9,15 +9,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 12000,
-            "max_inclusive": 20000
+            "min_inclusive": 5400,
+            "max_inclusive": 9000
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 40000,
-            "max_inclusive": 72000
+            "min_inclusive": 24000,
+            "max_inclusive": 36000
           }
         }
       },
@@ -36,15 +36,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 16000,
-            "max_inclusive": 24000
+            "min_inclusive": 3600,
+            "max_inclusive": 7200
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 32000,
-            "max_inclusive": 50000
+            "min_inclusive": 30000,
+            "max_inclusive": 48000
           }
         }
       },
@@ -62,15 +62,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 12000,
-            "max_inclusive": 18000
+            "min_inclusive": 4342,
+            "max_inclusive": 7598
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 24000,
-            "max_inclusive": 48000
+            "min_inclusive": 29186,
+            "max_inclusive": 46433
           }
         }
       },
@@ -88,15 +88,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 12000,
-            "max_inclusive": 24000
+            "min_inclusive": 4800,
+            "max_inclusive": 8400
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 32000,
-            "max_inclusive": 64000
+            "min_inclusive": 24000,
+            "max_inclusive": 42000
           }
         }
       },
@@ -114,15 +114,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 18000,
-            "max_inclusive": 36000
+            "min_inclusive": 4116,
+            "max_inclusive": 7409
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 6000,
-            "max_inclusive": 18000
+            "min_inclusive": 34986,
+            "max_inclusive": 55977
           }
         }
       },
@@ -140,15 +140,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 24000,
-            "max_inclusive": 52000
+            "min_inclusive": 4800,
+            "max_inclusive": 8000
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 6000,
-            "max_inclusive": 16000
+            "min_inclusive": 32400,
+            "max_inclusive": 54000
           }
         }
       },
@@ -167,15 +167,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 22000,
-            "max_inclusive": 44000
+            "min_inclusive": 4000,
+            "max_inclusive": 7200
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 10000,
-            "max_inclusive": 24000
+            "min_inclusive": 36000,
+            "max_inclusive": 63000
           }
         }
       },
@@ -193,15 +193,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 20000,
-            "max_inclusive": 42000
+            "min_inclusive": 4000,
+            "max_inclusive": 6400
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 12000,
-            "max_inclusive": 28000
+            "min_inclusive": 39600,
+            "max_inclusive": 64800
           }
         }
       },
@@ -219,15 +219,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 18000,
-            "max_inclusive": 36000
+            "min_inclusive": 3293,
+            "max_inclusive": 5762
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 12000,
-            "max_inclusive": 30000
+            "min_inclusive": 41983,
+            "max_inclusive": 66473
           }
         }
       },
@@ -245,15 +245,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 12000,
-            "max_inclusive": 28000
+            "min_inclusive": 2400,
+            "max_inclusive": 4800
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 18000,
-            "max_inclusive": 42000
+            "min_inclusive": 45000,
+            "max_inclusive": 72000
           }
         }
       },
@@ -271,15 +271,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 16000,
-            "max_inclusive": 32000
+            "min_inclusive": 2642,
+            "max_inclusive": 5283
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 32000,
-            "max_inclusive": 64000
+            "min_inclusive": 45789,
+            "max_inclusive": 73590
           }
         }
       },
@@ -297,15 +297,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 12000,
-            "max_inclusive": 24000
+            "min_inclusive": 3600,
+            "max_inclusive": 6000
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 48000,
-            "max_inclusive": 96000
+            "min_inclusive": 38400,
+            "max_inclusive": 60000
           }
         }
       },
@@ -316,15 +316,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 8000,
-            "max_inclusive": 16000
+            "min_inclusive": 4231,
+            "max_inclusive": 7051
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 64000,
-            "max_inclusive": 128000
+            "min_inclusive": 35740,
+            "max_inclusive": 56164
           }
         }
       },
@@ -334,15 +334,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 6000,
-            "max_inclusive": 12000
+            "min_inclusive": 2939,
+            "max_inclusive": 7348
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 72000,
-            "max_inclusive": 144000
+            "min_inclusive": 39192,
+            "max_inclusive": 58788
           }
         }
       },
@@ -352,15 +352,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 4000,
-            "max_inclusive": 8000
+            "min_inclusive": 3271,
+            "max_inclusive": 6541
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 96000,
-            "max_inclusive": 150000
+            "min_inclusive": 39625,
+            "max_inclusive": 57236
           }
         }
       },
@@ -370,15 +370,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 4000,
-            "max_inclusive": 8000
+            "min_inclusive": 3499,
+            "max_inclusive": 6997
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 96000,
-            "max_inclusive": 150000
+            "min_inclusive": 37044,
+            "max_inclusive": 57624
           }
         }
       },
@@ -388,15 +388,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 2000,
-            "max_inclusive": 6000
+            "min_inclusive": 3600,
+            "max_inclusive": 7200
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 100000,
-            "max_inclusive": 140000
+            "min_inclusive": 40000,
+            "max_inclusive": 56000
           }
         }
       },
@@ -406,15 +406,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 2000,
-            "max_inclusive": 4000
+            "min_inclusive": 3600,
+            "max_inclusive": 7200
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 120000,
-            "max_inclusive": 150000
+            "min_inclusive": 40000,
+            "max_inclusive": 60000
           }
         }
       },
@@ -424,15 +424,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 2000,
-            "max_inclusive": 4000
+            "min_inclusive": 7200,
+            "max_inclusive": 10800
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 90000,
-            "max_inclusive": 120000
+            "min_inclusive": 28000,
+            "max_inclusive": 40000
           }
         }
       },
@@ -443,15 +443,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 8000,
-            "max_inclusive": 16000
+            "min_inclusive": 7348,
+            "max_inclusive": 11758
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 72000,
-            "max_inclusive": 90000
+            "min_inclusive": 27434,
+            "max_inclusive": 41151
           }
         }
       },
@@ -462,15 +462,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 16000,
-            "max_inclusive": 32000
+            "min_inclusive": 7200,
+            "max_inclusive": 12000
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 48000,
-            "max_inclusive": 80000
+            "min_inclusive": 26400,
+            "max_inclusive": 42000
           }
         }
       },
@@ -479,15 +479,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 8000,
-            "max_inclusive": 16000
+            "min_inclusive": 7960,
+            "max_inclusive": 13266
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 72000,
-            "max_inclusive": 96000
+            "min_inclusive": 26051,
+            "max_inclusive": 41247
           }
         }
       },
@@ -497,15 +497,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 4000,
-            "max_inclusive": 8000
+            "min_inclusive": 7348,
+            "max_inclusive": 13227
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 72000,
-            "max_inclusive": 96000
+            "min_inclusive": 25475,
+            "max_inclusive": 39192
           }
         }
       },
@@ -516,15 +516,15 @@
         "rain": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 2000,
-            "max_inclusive": 5000
+            "min_inclusive": 7200,
+            "max_inclusive": 12600
           }
         },
         "rain_delay": {
           "type": "minecraft:uniform",
           "value": {
-            "min_inclusive": 96000,
-            "max_inclusive": 144000
+            "min_inclusive": 25600,
+            "max_inclusive": 40000
           }
         }
       }
