@@ -482,6 +482,8 @@
   "eclipticseasons.configuration.VoxyRefreshSeasonalModels.tooltip": "当季节方块模型可能发生变化时，重新构建视野内的 Voxy LOD 几何体。",
   "eclipticseasons.configuration.AlternatingWeatherModel": "交替天气模型",
   "eclipticseasons.configuration.AlternatingWeatherModel.tooltip": "晴雨天气交替出现，不再有连绵不断的雨天或持续不变的晴天。\n未启用节气天气时，此配置无效。",
+  "eclipticseasons.configuration.SnowfallTiming": "降雪时间",
+  "eclipticseasons.configuration.SnowfallTiming.tooltip": "设置主世界生物群系降雪时间的分配方式。",
   "patchouli_books.eclipticseasons.seasons_chronicle.name": "岁时记",
   "patchouli_books.eclipticseasons.seasons_chronicle.landing_text": "每个季节都会留下印记——《岁时记》记录了这一切。",
   "info.eclipticseasons.humidity_control": "湿度调节",
@@ -612,5 +614,11 @@
   "info.eclipticseasons.seasonal_simulation_level.ecology.tooltip": "让自然方块、植被与生态系统随季节变化。",
   "info.eclipticseasons.seasonal_simulation_level.agriculture.tooltip": "进一步影响作物生长、耕作与其他农业机制。",
   "info.eclipticseasons.seasonal_simulation_level.survival.tooltip": "完整启用动物、温度与生存相关的季节玩法。",
-  "info.eclipticseasons.seasonal_simulation_level.custom.tooltip": "不使用预设等级，按照偏好逐项调整季节功能。"
+  "info.eclipticseasons.seasonal_simulation_level.custom.tooltip": "不使用预设等级，按照偏好逐项调整季节功能。",
+  "info.eclipticseasons.snowfall_timing.unified": "统一降雪时间",
+  "info.eclipticseasons.snowfall_timing.unified.tooltip": "所有主世界生物群系采用相同的降雪时间。",
+  "info.eclipticseasons.snowfall_timing.regional": "气候分区",
+  "info.eclipticseasons.snowfall_timing.regional.tooltip": "根据气候分区，为不同区域分配对应的降雪时间。",
+  "info.eclipticseasons.snowfall_timing.custom": "自定义",
+  "info.eclipticseasons.snowfall_timing.custom.tooltip": "不加载内置降雪时间数据包，可由玩家或整合包作者自行定义降雪时间。"
 }

@@ -159,8 +159,12 @@ public class SuggestedListStringEntry extends SpecEntry<List<? extends String>> 
 
             Identifier identifier = Identifier.tryParse(text);
             if (identifier != null && (BuiltInRegistries.BLOCK.get(identifier).isPresent() || text.isEmpty())) {
-                var stringsCopy = new ArrayList<String>(List.copyOf(spec.get()));
-                if (index >= stringsCopy.size() && !text.isEmpty()) {
+                List<String> stringsCopy = new ArrayList<>(spec.get());
+                if (index >= stringsCopy.size()) {
+                    if (text.isEmpty()) return;
+                    while (stringsCopy.size() < index) {
+                        stringsCopy.add("");
+                    }
                     stringsCopy.add(text);
                 } else {
                     stringsCopy.set(index, text);

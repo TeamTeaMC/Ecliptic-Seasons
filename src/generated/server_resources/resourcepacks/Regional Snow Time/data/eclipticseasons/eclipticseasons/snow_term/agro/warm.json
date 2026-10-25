@@ -1,21 +1,16 @@
 {
   "biomes": "#eclipticseasons:agro/warm",
-  "start": "heavy_snow",
+  "start": "beginning_of_winter",
   "end": "greater_cold",
   "events": [
     {
       "temp_offset": -0.1,
-      "start": "beginning_of_winter",
-      "end": "greater_cold"
+      "start": "autumnal_equinox",
+      "end": "insects_awakening"
     },
     {
       "temp_offset": 0.0,
-      "start": "light_snow",
-      "end": "greater_cold"
-    },
-    {
-      "temp_offset": 0.05,
-      "start": "winter_solstice",
+      "start": "beginning_of_winter",
       "end": "greater_cold"
     },
     {

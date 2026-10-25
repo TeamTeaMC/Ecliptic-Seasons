@@ -1,3 +1,8 @@
+### 0.15.5
+
+- Extended the snowfall period in warm regions to cover the entire winter.
+- Improved the configuration options for snowfall schedules.
+
 ### 0.15.2
 
 - Added an alternating weather model, enabled by default. 
