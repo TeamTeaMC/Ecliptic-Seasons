@@ -1,26 +1,27 @@
+
 {
 	"biomes": "#minecraft:is_overworld",
-	"start": "heavy_snow",
+	"start": "beginning_of_winter",
 	"end": "greater_cold",
 	"events": [
 		{
 			"temp_offset": -0.2,
+			"start": "first_frost",
+			"end": "insects_awakening"
+		},
+		{
+			"temp_offset": -0.1,
 			"start": "beginning_of_winter",
 			"end": "greater_cold"
 		},
 		{
-			"temp_offset": -0.1,
-			"start": "light_snow",
-			"end": "greater_cold"
-		},
-		{
 			"temp_offset": 0.01,
-			"start": "heavy_snow",
+			"start": "beginning_of_winter",
 			"end": "greater_cold"
 		},
 		{
 			"temp_offset": 0.1,
-			"start": "winter_solstice",
+			"start": "light_snow",
 			"end": "greater_cold"
 		},
 		{

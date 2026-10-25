@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.data.extend.regional_snow_time;
 
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.climate.SnowTerm;
+import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.constant.tag.ClimateTypeBiomeTags;
 import com.teamtea.eclipticseasons.api.data.weather.CustomSnowTerm;
 import com.teamtea.eclipticseasons.common.registry.ESRegistries;
@@ -33,61 +34,46 @@ public class RegionalSnowTimeProvider {
                                 .tempEvents(List.of(
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(-0.18f)
-                                                .start(SnowTerm.TN.getStart())
-                                                .end(SnowTerm.TN.getEnd())
+                                                .start(SolarTerm.SUMMER_SOLSTICE)
+                                                .end(SolarTerm.GRAIN_IN_EAR)
                                                 .build(),
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(0f)
-                                                .start(SnowTerm.T000.getStart())
-                                                .end(SnowTerm.T000.getEnd())
-                                                .build(),
-                                        CustomSnowTerm.TempEvent.builder()
-                                                .tempOffset(0.05f)
-                                                .start(SnowTerm.T005.getStart())
-                                                .end(SnowTerm.T005.getEnd())
-                                                .build(),
-                                        CustomSnowTerm.TempEvent.builder()
-                                                .tempOffset(0.1f)
-                                                .start(SnowTerm.T01.getStart())
-                                                .end(SnowTerm.T01.getEnd())
+                                                .start(SolarTerm.BEGINNING_OF_AUTUMN)
+                                                .end(SolarTerm.GRAIN_IN_EAR)
                                                 .build(),
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(0.3f)
-                                                .start(SnowTerm.T015.getStart())
-                                                .end(SnowTerm.T015.getEnd())
+                                                .start(SolarTerm.BEGINNING_OF_WINTER)
+                                                .end(SolarTerm.GREATER_COLD)
                                                 .build()
                                 ))
                                 .build());
 
                 context.register(ResourceKey.create(ESRegistries.SNOW_TERM, ClimateTypeBiomeTags.WARM_REGION.location()),
                         CustomSnowTerm.builder().biomes(lookup.getOrThrow(ClimateTypeBiomeTags.WARM_REGION))
-                                .start(SnowTerm.T07.getStart())
-                                .end(SnowTerm.T07.getEnd())
+                                .start(SnowTerm.T015.getStart())
+                                .end(SnowTerm.T015.getEnd())
                                 .tempEvents(List.of(
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(-0.1f)
-                                                .start(SnowTerm.T05.getStart())
-                                                .end(SnowTerm.T05.getEnd())
+                                                .start(SolarTerm.AUTUMNAL_EQUINOX)
+                                                .end(SolarTerm.INSECTS_AWAKENING)
                                                 .build(),
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(0f)
-                                                .start(SnowTerm.T06.getStart())
-                                                .end(SnowTerm.T06.getEnd())
-                                                .build(),
-                                        CustomSnowTerm.TempEvent.builder()
-                                                .tempOffset(0.05f)
-                                                .start(SnowTerm.T08.getStart())
-                                                .end(SnowTerm.T08.getEnd())
+                                                .start(SolarTerm.BEGINNING_OF_WINTER)
+                                                .end(SolarTerm.GREATER_COLD)
                                                 .build(),
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(0.1f)
-                                                .start(SnowTerm.T095.getStart())
-                                                .end(SnowTerm.T095.getEnd())
+                                                .start(SolarTerm.GREATER_COLD)
+                                                .end(SolarTerm.GREATER_COLD)
                                                 .build(),
                                         CustomSnowTerm.TempEvent.builder()
                                                 .tempOffset(0.3f)
-                                                .start(SnowTerm.T1.getStart())
-                                                .end(SnowTerm.T1.getEnd())
+                                                .start(SolarTerm.NONE)
+                                                .end(SolarTerm.NONE)
                                                 .build()
                                 ))
                                 .build());

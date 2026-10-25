@@ -78,12 +78,13 @@ public enum SeasonalSimulationLevel implements ITranslatable {
             StringRepresentable.fromEnum(SeasonalSimulationLevel::values);
 
     public static void onSeasonalSimulationLevelChange(SeasonalSimulationLevel current) {
-        if (current == CUSTOM || CommonConfig.getSeasonalSimulationLevel() == current) return;
+        if (CommonConfig.getSeasonalSimulationLevel() == current) return;
 
         CommonConfig.Season.seasonalSimulationLevel.clearCache();
         CommonConfig.Season.seasonalSimulationLevel.set(current);
-
         CommonConfig.setSeasonalSimulationLevel(current);
+
+        if (current == CUSTOM) return;
 
         CommonConfig.Crop.enableCrop.set(
                 current.enable(AGRICULTURE));

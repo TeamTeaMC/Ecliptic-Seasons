@@ -485,6 +485,8 @@
   "eclipticseasons.configuration.SimpleSeasonalAgriculture.tooltip": "Controls crop growth by season only and enables simple greenhouse detection, requiring only valid cover above the crop.",
   "eclipticseasons.configuration.AlternatingWeatherModel": "Alternating Weather Model",
   "eclipticseasons.configuration.AlternatingWeatherModel.tooltip": "Clear and rainy periods alternate, preventing endless rain or perpetual clear skies.\nIgnored if UseSolarWeather is disabled.",
+  "eclipticseasons.configuration.SnowfallTiming": "Snowfall Timing",
+  "eclipticseasons.configuration.SnowfallTiming.tooltip": "Determines how snowfall schedules are assigned to Overworld biomes.",
   "patchouli_books.eclipticseasons.seasons_chronicle.name": "Seasons Chronicle",
   "patchouli_books.eclipticseasons.seasons_chronicle.landing_text": "Each season leaves a mark — the \"Seasons Chronicle\" records them all.",
   "info.eclipticseasons.humidity_control": "Humidity Control",
@@ -615,5 +617,11 @@
   "info.eclipticseasons.seasonal_simulation_level.ecology.tooltip": "Allows natural blocks, vegetation, and ecosystems to change with the seasons.",
   "info.eclipticseasons.seasonal_simulation_level.agriculture.tooltip": "Further affects crop growth, farming, and other agricultural mechanics.",
   "info.eclipticseasons.seasonal_simulation_level.survival.tooltip": "Fully enables seasonal gameplay involving animals, temperature, and survival.",
-  "info.eclipticseasons.seasonal_simulation_level.custom.tooltip": "Adjust each seasonal feature individually instead of using a preset level."
+  "info.eclipticseasons.seasonal_simulation_level.custom.tooltip": "Adjust each seasonal feature individually instead of using a preset level.",
+  "info.eclipticseasons.snowfall_timing.unified": "Unified",
+  "info.eclipticseasons.snowfall_timing.unified.tooltip": "Uses the same snowfall schedule for all Overworld biomes.",
+  "info.eclipticseasons.snowfall_timing.regional": "Climate Regions",
+  "info.eclipticseasons.snowfall_timing.regional.tooltip": "Assigns snowfall schedules according to climate regions.",
+  "info.eclipticseasons.snowfall_timing.custom": "Custom",
+  "info.eclipticseasons.snowfall_timing.custom.tooltip": "Disables built-in snowfall schedule datapacks, allowing players and modpack creators to define their own schedules."
 }

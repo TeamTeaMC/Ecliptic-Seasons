@@ -1,1 +1,5 @@
-- Rebalanced precipitation durations and clear-weather intervals throughout the year, with shorter rain periods and more time for clear skies.
+- Extended the snowfall period in warm regions to cover the entire winter.
+- Improved the configuration options for snowfall schedules.
+- Fixed an issue where newly created worlds would always start with rain. Clear weather duration now varies with the solar terms.
+- Fixed an issue where the seasonal simulation level could not remain set to "Custom" in the recommended settings screen ([Issue #8](https://github.com/TeamTeaMC/Ecliptic-Seasons-Fabricated/issues/8)).
+- Fixed a potential crash when clicking the "Force No Snow Cover" configuration text field under certain conditions ([Issue #199](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/199)).
