@@ -470,6 +470,11 @@ public class WeatherManager {
 
         int clearTime = weatherData.getClearWeatherTime();
         int rainTime = weatherData.getRainTime();
+        if (clearTime + rainTime == 0 && level.getGameTime() < 24000) {
+            onSetWeatherParameters(level, biomeRain.getRainDelay(random), 0, false, false);
+            clearTime = weatherData.getClearWeatherTime();
+            rainTime = weatherData.getRainTime();
+        }
         int thunderTime = weatherData.getThunderTime();
 
         boolean raining = weatherData.isRaining();

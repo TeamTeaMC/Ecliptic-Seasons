@@ -1,5 +1,10 @@
 > 1.21.1 will now receive bug fixes and compatibility updates only.
 > New features will primarily target newer Minecraft versions.
+### 0.15.5
+
+- Extended the snowfall period in warm regions to cover the entire winter.
+- Improved the configuration options for snowfall schedules.
+
 ### 0.15.2
 
 - Added an alternating weather model, enabled by default. 

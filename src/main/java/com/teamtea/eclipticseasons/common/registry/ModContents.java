@@ -3,6 +3,7 @@ package com.teamtea.eclipticseasons.common.registry;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.EclipticSeasonsApi;
 import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.api.constant.simulation.SnowfallTiming;
 import com.teamtea.eclipticseasons.api.constant.tag.ESItemTags;
 import com.teamtea.eclipticseasons.api.data.misc.ESSortInfo;
 import com.teamtea.eclipticseasons.api.data.season.SeasonCycle;
@@ -183,9 +184,11 @@ public class ModContents {
                 addPackIfEnabled(event, modFile,
                         "Rain Together", "rain_together");
                 addPackIfEnabled(event, modFile,
-                        CommonConfig.Resource.climateZoneSnowfallTiming, "Regional Snow Time", "regional_snow_time");
+                        CommonConfig.Resource.snowfallTiming, SnowfallTiming.REGIONAL,
+                        "Regional Snow Time", "regional_snow_time");
                 addPackIfEnabled(event, modFile,
-                        CommonConfig.Resource.synchronizedBiomeSnowfall, "Snow Together", "snow_together");
+                        CommonConfig.Resource.snowfallTiming, SnowfallTiming.UNIFIED,
+                        "Snow Together", "snow_together");
                 addPackIfEnabled(event, modFile,
                         CommonConfig.Resource.VanillaBiomeClimateSettings, "Vanilla Biome Climate Settings", "vanilla_biome_climate_settings");
                 addPackIfEnabled(event, modFile,
@@ -199,6 +202,14 @@ public class ModContents {
     private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, ModConfigSpec.BooleanValue booleanValue, String name, String pack_id) {
         if (booleanValue.get())
             addPackIfEnabled(event, modFile, name, pack_id);
+    }
+
+    private static <T extends Enum<T>> void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile,
+                                                             ModConfigSpec.EnumValue<T> use, T expected,
+                                                             String name, String id) {
+        if (use.get() == expected) {
+            addPackIfEnabled(event, modFile, name, id);
+        }
     }
 
     private static void addPackIfEnabled(AddPackFindersEvent event, ModFile modFile, String name, String pack_id) {
