@@ -190,8 +190,7 @@ public class ConfigRegistry {
                 CommonConfig.Snow.snowyWinter,
                 CommonConfig.Snow.blocksNotSnowy,
                 CommonConfig.Snow.snowInWorld,
-                CommonConfig.Resource.synchronizedBiomeSnowfall,
-                CommonConfig.Resource.climateZoneSnowfallTiming,
+                CommonConfig.Resource.snowfallTiming,
                 CommonConfig.Weather.snowAccumulationSpeedMultiplier,
                 CommonConfig.Weather.snowMeltSpeedMultiplier
         );

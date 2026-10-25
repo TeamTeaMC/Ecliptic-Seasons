@@ -4,6 +4,7 @@ package com.teamtea.eclipticseasons.config;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.teamtea.eclipticseasons.EclipticSeasons;
 import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.api.constant.simulation.SnowfallTiming;
 import com.teamtea.eclipticseasons.api.constant.solar.SolarTerm;
 import com.teamtea.eclipticseasons.api.util.EclipticUtil;
 import com.teamtea.eclipticseasons.common.core.crop.CropGrowthHandler;
@@ -531,9 +532,8 @@ public class CommonConfig {
     public static class Resource {
         public static ForgeConfigSpec.BooleanValue extraSnow;
 
-        public static ForgeConfigSpec.BooleanValue synchronizedBiomeSnowfall;
+        public static ForgeConfigSpec.EnumValue<SnowfallTiming> snowfallTiming;;
         // public static ForgeConfigSpec.BooleanValue RainTogether;
-        public static ForgeConfigSpec.BooleanValue climateZoneSnowfallTiming;
         public static ForgeConfigSpec.BooleanValue VanillaBiomeClimateSettings;
         public static ForgeConfigSpec.BooleanValue NotIgnoreRiver;
 
@@ -547,13 +547,14 @@ public class CommonConfig {
             // RainTogether = builder.comment("Synchronizes weather states across all Overworld biomes, ensuring global rainfall.")
             //         .define("RainTogether", true);
 
-            synchronizedBiomeSnowfall = builder.comment("Synchronizes the snowfall schedule for all Overworld biomes.")
+            snowfallTiming = builder.comment(
+                            "Selects how snowfall schedules are assigned.",
+                            "UNIFIED: Uses one snowfall schedule for all Overworld biomes.",
+                            "REGIONAL: Uses climate-region-specific snowfall schedules.",
+                            "CUSTOM: Does not load built-in snowfall schedule datapacks."
+                    )
                     .worldRestart()
-                    .define("SynchronizedBiomeSnowfall", false);
-
-            climateZoneSnowfallTiming = builder.comment("Aligns snowfall schedules based on three broad climate zones (Warm, Temperate, and Cold) instead of per-biome.")
-                    .worldRestart()
-                    .define("ClimateZoneSnowfallTiming", true);
+                    .defineEnum("SnowfallTiming", SnowfallTiming.REGIONAL);;
 
             VanillaBiomeClimateSettings = builder.comment("Enforces original Vanilla temperature and precipitation settings to prevent other mods from creating extreme environmental values.")
                     .worldRestart()

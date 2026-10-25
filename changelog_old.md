@@ -1,6 +1,11 @@
 > As the ecosystem for 1.20.1 begins to wind down with major mods like Create moving on, we are also transitioning into
 > the final maintenance phase for our mod on this version.
 
+### 0.15.5
+
+- Extended the snowfall period in warm regions to cover the entire winter.
+- Improved the configuration options for snowfall schedules.
+
 ### 0.15.2
 
 - Added an alternating weather model, enabled by default. 
