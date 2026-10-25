@@ -1,7 +1,8 @@
-package com.teamtea.eclipticseasons.config.update.worker;
+package com.teamtea.eclipticseasons.config.update.worker.special;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.teamtea.eclipticseasons.api.constant.simulation.SeasonalSimulationLevel;
+import com.teamtea.eclipticseasons.config.update.worker.ConfigMigration;
 import lombok.Builder;
 
 import java.util.Locale;

@@ -42,7 +42,7 @@ public class SolarUtil {
     }
 
     public static ISnowTerm getSnowTerm(Biome biome, boolean isServer, float tempChange) {
-        if (biome == null) return SnowTerm.T05;
+        if (biome == null) return SnowTerm.T015;
         ISnowTerm customSnowTerm = BiomeClimateManager.getCustomSnowTerm(biome, isServer);
         if (customSnowTerm != null) return customSnowTerm.cast(tempChange);
         // float t = BiomeClimateManager.getDefaultTemperature(biome, isServer);

@@ -11,18 +11,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class ConfigMigrator {
-    public static final int CURRENT_CONFIG_VERSION = 3;
 
     public static void init() {
         CommentedFileConfig mixinRecord = EclipticSeasonsMixinPlugin.PreloadedConfig.getConfig();
         int oldVersion;
         if (mixinRecord != null) {
             oldVersion = mixinRecord.getIntOrElse("version", 0);
-            if (oldVersion != CURRENT_CONFIG_VERSION) {
-                mixinRecord.set("version", CURRENT_CONFIG_VERSION);
+            if (oldVersion != ConfigMigrationsHolder.CURRENT_CONFIG_VERSION) {
+                mixinRecord.set("version", ConfigMigrationsHolder.CURRENT_CONFIG_VERSION);
             }
         } else {
-            oldVersion = CURRENT_CONFIG_VERSION;
+            oldVersion = ConfigMigrationsHolder.CURRENT_CONFIG_VERSION;
         }
         // SeasonalSimulationLevel level = SeasonalSimulationLevel.CUSTOM;
         // try (CommentedFileConfig config = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get()
