@@ -26,7 +26,6 @@ import net.minecraft.core.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -507,14 +506,9 @@ public class MapChecker {
 
     public static boolean isLoaded(Level level, int chunkX, int chunkZ) {
         if (level.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
-            ChunkHolder visibleChunkIfPresent =
-                    serverChunkCache.getVisibleChunkIfPresent(ChunkPos.pack(chunkX, chunkZ));
-            if (visibleChunkIfPresent == null) return false;
-            var completablefuture = visibleChunkIfPresent.getFullChunkFuture();
-            var either = completablefuture.getNow(null);
-            LevelChunk o = either == null ? null : either.orElse(null);
-            return o != null;
-            // return visibleChunkIfPresent.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING);
+            // Non-blocking full-chunk check. On NeoForge this also returns the chunk
+            // currently being loaded (ChunkHolder#currentlyLoading) during ChunkEvent.Load.
+            return serverChunkCache.getChunkNow(chunkX, chunkZ) != null;
         }
         return level.getChunkSource().hasChunk(chunkX, chunkZ);
     }
