@@ -1,5 +1,1 @@
-- Extended the snowfall period in warm regions to cover the entire winter.
-- Improved the configuration options for snowfall schedules.
-- Fixed an issue where newly created worlds would always start with rain. Clear weather duration now varies with the solar terms.
-- Fixed an issue where the seasonal simulation level could not remain set to "Custom" in the recommended settings screen ([Issue #8](https://github.com/TeamTeaMC/Ecliptic-Seasons-Fabricated/issues/8)).
-- Fixed a potential crash when clicking the "Force No Snow Cover" configuration text field under certain conditions ([Issue #199](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/199)).
+- Fixed Moonrise compatibility issues in `MapChecker.isLoaded()` by replacing the unsupported chunk future API with non-blocking chunk checks. ([#200](https://github.com/TeamTeaMC/Ecliptic-Seasons/pull/200), thanks to [@jpenilla](https://github.com/jpenilla))

@@ -508,13 +508,13 @@ public class MapChecker {
 
     public static boolean isLoaded(Level level, int chunkX, int chunkZ) {
         if (level.getChunkSource() instanceof ServerChunkCache serverChunkCache) {
-            ChunkHolder visibleChunkIfPresent =
-                    serverChunkCache.getVisibleChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
-            if (visibleChunkIfPresent == null) return false;
-            var completablefuture = visibleChunkIfPresent.getFullChunkFuture();
-            var either = completablefuture.getNow(null);
-            LevelChunk o = either == null ? null : either.orElse(null);
-            return o != null;
+            // On the main thread, getChunkNow also returns the chunk currently being loaded
+            // (ChunkHolder#currentlyLoading) during ChunkEvent.Load.
+            if (serverChunkCache.getChunkNow(chunkX, chunkZ) != null) return true;
+            // getChunkNow returns null off the main thread; do the same FULL status lookup on the holder.
+            // Non-blocking, never triggers a load, safe from any thread.
+            ChunkHolder holder = serverChunkCache.getVisibleChunkIfPresent(ChunkPos.asLong(chunkX, chunkZ));
+            return holder != null && holder.getChunkIfPresent(ChunkStatus.FULL) instanceof LevelChunk;
             // return visibleChunkIfPresent.getFullStatus().isOrAfter(FullChunkStatus.ENTITY_TICKING);
         }
         return level.getChunkSource().hasChunk(chunkX, chunkZ);
