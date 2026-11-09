@@ -87,7 +87,8 @@
     "compat.voxy.MixinModelTextureBakery",
     "compat.voxy.MixinWorldUpdater",
     "compat.voxy.ModelFactoryInvoker",
-    "compat.voxy.ModelStoreAccessor"
+    "compat.voxy.ModelStoreAccessor",
+    "compat.voxy.ModelFactoryModelBlockStatePairAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

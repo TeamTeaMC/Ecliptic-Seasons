@@ -34,6 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -179,14 +180,29 @@ public abstract class MixinModelFactory implements IVoxyModelFactory {
         eclipticseasons$refreshTintRequested = false;
 
         int biomeCount = biomes.size();
-        int modelCount = modelsRequiringBiomeColours.size();
+        List<?> coloursR = this.modelsRequiringBiomeColours;
+        int modelCount = coloursR.size();
 
         if (biomeCount == 0 || modelCount == 0) return;
 
         MemoryBuffer upload = new MemoryBuffer((long) biomeCount * modelCount * Integer.BYTES);
         long pointer = upload.address;
 
-        for (Pair<Integer, BlockState> entry : modelsRequiringBiomeColours) {
+        List<Pair<Integer, BlockState>> colours;
+        if(coloursR.getFirst()instanceof Pair){
+            colours=(List<Pair<Integer, BlockState>>) coloursR;
+        }else {
+            colours=new ArrayList<>();
+            for (Object o : coloursR) {
+                if(o instanceof ModelFactoryModelBlockStatePairAccessor accessor){
+                    colours.add(new Pair<>(accessor.eclipticseasons$getModel(),accessor.eclipticseasons$getState()));
+                }else {
+                    EclipticSeasons.logger("Unknown Voxy model pair class "+o.getClass().getName());
+                }
+            }
+        }
+
+        for (Pair<Integer, BlockState> entry : colours) {
             BlockState state = entry.right();
             List<BlockTintSource> tintSources =
                     ModelFactoryInvoker.eclipticseasons$getTintSources(state);
