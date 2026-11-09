@@ -198,6 +198,9 @@ public abstract class MixinModelFactory implements IVoxyModelFactory {
                     colour = ModelFactoryInvoker.eclipticseasons$captureColourConstant(
                             tintSources, state, biome
                     ) | 0xFF000000;
+                    if (colour == 0xFFFFFFFF && !tintSources.isEmpty()) {
+                        colour = tintSources.getFirst().color(state);
+                    }
                 }
 
                 MemoryUtil.memPutInt(pointer, colour);
