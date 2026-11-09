@@ -1,1 +1,1 @@
-- Fixed Moonrise compatibility issues in `MapChecker.isLoaded()` by replacing the unsupported chunk future API with non-blocking chunk checks. ([#200](https://github.com/TeamTeaMC/Ecliptic-Seasons/pull/200), thanks to [@jpenilla](https://github.com/jpenilla))
+- for leaves colors in voxy plugin.
