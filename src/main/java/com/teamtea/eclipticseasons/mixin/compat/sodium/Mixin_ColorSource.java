@@ -40,7 +40,12 @@ public abstract class Mixin_ColorSource implements SodiumBlenderColorProvider {
             int[] output,
             boolean smooth
     ) {
-        if (this.color[quad.getTintIndex()] instanceof SodiumBlenderColorProvider provider) {
+        int tintIndex = quad.getTintIndex();
+        if (tintIndex < 0 || tintIndex >= this.color.length) {
+            return false;
+        }
+
+        if (this.color[tintIndex] instanceof SodiumBlenderColorProvider provider) {
             provider.getColors(slice, pos, scratchPos, state, quad, output, smooth);
             return true;
         }
