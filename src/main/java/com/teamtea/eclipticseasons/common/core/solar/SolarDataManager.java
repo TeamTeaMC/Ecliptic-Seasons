@@ -54,6 +54,8 @@ public class SolarDataManager extends SavedData {
     protected boolean isValidDimension = false;
     protected float solarTempChange = 0;
     private int biomeDataVersion = 0;
+    // The term the server last announced. Not saved: it is set on the first tick after loading.
+    protected SolarTerm lastSolarTerm = null;
 
     protected WeakReference<Level> levelWeakReference;
     protected List<Holder<SpecialDays>> CACHE;
@@ -478,15 +480,16 @@ public class SolarDataManager extends SavedData {
     }
 
     public void sendAndUpdate(ServerLevel world) {
-        boolean changeSolarTerm = getSolarTermsDay() % CommonConfig.Season.lastingDaysOfEachTerm.get() == 0;
-        boolean updateTempChange = false;
-
         SolarTerm solarTerm = getSolarTerm();
+        // Compare with the term last announced, as the client does, so that jumps
+        // into the middle of a term are announced and the old term is the real one.
+        SolarTerm old = lastSolarTerm == null ? solarTerm : lastSolarTerm;
+        lastSolarTerm = solarTerm;
+        boolean changeSolarTerm = solarTerm != old;
+        boolean updateTempChange = false;
 
         if (changeSolarTerm) {
             // BiomeClimateManager.updateTemperature(world, getSolarTerm());
-            SolarTerm old = SolarTerm.collectValues()[(getSolarTermIndex() + 24) % 24];
-
             MinecraftForge.EVENT_BUS.post(new SolarTermChangeEvent(old, solarTerm, world, solarTermsDay));
             if (solarTerm == SolarTerm.SUMMER_SOLSTICE) {
                 setSolarTempChange(createTempChange(world));
