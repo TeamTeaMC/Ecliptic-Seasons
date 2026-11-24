@@ -25,6 +25,7 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import org.jspecify.annotations.NonNull;
@@ -87,7 +88,8 @@ public class GreenHouseCoreSpecialRenderer implements SpecialModelRenderer<Integ
         modelPart.getAllParts().forEach(ModelPart::resetPose);
 
         long seed = 0;
-        long time = (Minecraft.getInstance().level.getGameTime()) % 50L;
+        Level level = Minecraft.getInstance().level;
+        long time = (level==null?0:level.getGameTime()) % 50L;
         long renderTicks = (time + 0) * 40;
         renderTicks = renderTicks * 3000 / 2000;
 
