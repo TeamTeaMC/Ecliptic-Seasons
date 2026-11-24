@@ -1,5 +1,4 @@
-- Extended the snowfall period in warm regions to cover the entire winter.
-- Improved the configuration options for snowfall schedules.
-- Fixed an issue where newly created worlds would always start with rain. Clear weather duration now varies with the solar terms.
-- Fixed an issue where the seasonal simulation level could not remain set to "Custom" in the recommended settings screen ([Issue #8](https://github.com/TeamTeaMC/Ecliptic-Seasons-Fabricated/issues/8)).
-- Fixed a potential crash when clicking the "Force No Snow Cover" configuration text field under certain conditions ([Issue #199](https://github.com/TeamTeaMC/Ecliptic-Seasons/issues/199)).
+- Added support for Sodium on Minecraft 26.3.
+- Guarded Sodium tint source lookups against invalid indices. Thanks to [@iconFehu](https://github.com/iconFehu).
+- `SolarTermChangeEvent` now fires on every solar term change and reports the actual previous term. Thanks to [@RoseHobgoblin](https://github.com/RoseHobgoblin).
+- Fixed a crash when rendering the Greenhouse Core item icon with no level loaded.
