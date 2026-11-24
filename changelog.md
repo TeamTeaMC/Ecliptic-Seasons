@@ -1,1 +1,4 @@
-- for leaves colors in voxy plugin.
+- Added support for Sodium on Minecraft 26.3.
+- Guarded Sodium tint source lookups against invalid indices. Thanks to [@iconFehu](https://github.com/iconFehu).
+- `SolarTermChangeEvent` now fires on every solar term change and reports the actual previous term. Thanks to [@RoseHobgoblin](https://github.com/RoseHobgoblin).
+- Fixed a crash when rendering the Greenhouse Core item icon with no level loaded. 
