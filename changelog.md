@@ -1,1 +1,4 @@
-- Fixed Moonrise compatibility issues in `MapChecker.isLoaded()` by replacing the unsupported chunk future API with non-blocking chunk checks. ([#200](https://github.com/TeamTeaMC/Ecliptic-Seasons/pull/200), thanks to [@jpenilla](https://github.com/jpenilla))
+- Added support for Sodium on Minecraft 26.3.
+- Guarded Sodium tint source lookups against invalid indices. Thanks to [@iconFehu](https://github.com/iconFehu).
+- `SolarTermChangeEvent` now fires on every solar term change and reports the actual previous term. Thanks to [@RoseHobgoblin](https://github.com/RoseHobgoblin).
+- Fixed a crash when rendering the Greenhouse Core item icon with no level loaded. No newline at end of file
