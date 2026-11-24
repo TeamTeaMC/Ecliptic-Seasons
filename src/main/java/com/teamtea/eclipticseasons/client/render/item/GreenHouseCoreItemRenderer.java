@@ -17,6 +17,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.joml.Vector3f;
 
 
@@ -65,8 +66,9 @@ public class GreenHouseCoreItemRenderer extends BlockEntityWithoutLevelRenderer 
 
         modelPart.getAllParts().forEach(ModelPart::resetPose);
 
+        Level level = Minecraft.getInstance().level;
         long seed = 0;
-        long time = (Minecraft.getInstance().level.getGameTime()) % 50L;
+        long time = (level==null?0:level.getGameTime()) % 50L;
         //
         long renderTicks = (long) ((time + 0) * 40);
 
