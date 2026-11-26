@@ -22,10 +22,11 @@ public abstract class Mixin_ColorSource implements SodiumBlenderColorProvider {
 
     @DirectInject(
             remap = false,
+            require = 0,
             method = "getColors(Lnet/caffeinemc/mods/sodium/client/world/LevelSlice;Lnet/minecraft/core/BlockPos;Lnet/minecraft/core/BlockPos$MutableBlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;[IZ)V",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;getColorIndex()I"
+                    target = "Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;sodium$getColorIndex()I"
             ),
             mode = DirectInject.Mode.CANCEL_IF_TRUE
     )

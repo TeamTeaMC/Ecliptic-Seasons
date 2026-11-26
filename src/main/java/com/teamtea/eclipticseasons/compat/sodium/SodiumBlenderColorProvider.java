@@ -28,9 +28,9 @@ public interface SodiumBlenderColorProvider extends ColorProvider<BlockState>, B
     }
 
     private int getVertexColor(LevelSlice slice, BlockPos pos, BlockPos.MutableBlockPos scratchPos, ModelQuadView quad, BlockState state, int vertexIndex) {
-        float x = quad.getX(vertexIndex) - 0.5F;
-        float y = quad.getY(vertexIndex) - 0.5F;
-        float z = quad.getZ(vertexIndex) - 0.5F;
+        float x = quad.sodium$getX(vertexIndex) - 0.5F;
+        float y = quad.sodium$getY(vertexIndex) - 0.5F;
+        float z = quad.sodium$getZ(vertexIndex) - 0.5F;
         int intX = Mth.floor(x);
         int intY = Mth.floor(y);
         int intZ = Mth.floor(z);
